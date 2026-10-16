@@ -7,7 +7,6 @@
              onclick="window.location.href = '@Url.Action("Index", "Home")';">
     </div>
     <div class="logosec">
-        @HttpContextAccessor.HttpContext.Session.GetString("UserName")
         <div class="mr-20 hover-pointer" style="position: relative">
             <div class="dp">
                 <img src="~/img/profile-logo.png"
@@ -19,10 +18,6 @@
                     <li>
                         <i class="fa-solid fa-gear"></i>
                         <a href="#">Settings</a>
-                    </li>
-                    <li>
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <a asp-action="SignOutUser" asp-controller="Account">Logout</a>
                     </li>
                 </ul>
             </div>

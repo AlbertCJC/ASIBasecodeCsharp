@@ -26,11 +26,6 @@
         public const string ApiKey = "X-Basecode-API-Key";
 
         /// <summary>
-        /// authentication scheme Name
-        /// </summary>
-        public const string AuthenticationScheme = "ASI_Basecode";
-
-        /// <summary>
         /// authentication Issuer
         /// </summary>
         public const string Issuer = "asi.basecode";

@@ -1,9 +1,6 @@
 ﻿using ASI.Basecode.Data;
 using ASI.Basecode.Resources.Constants;
-using ASI.Basecode.Services.Manager;
-using ASI.Basecode.WebApp.Authentication;
 using ASI.Basecode.WebApp.Extensions.Configuration;
-using ASI.Basecode.WebApp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -13,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
 using System.Text;
@@ -53,22 +49,6 @@ namespace ASI.Basecode.WebApp
 
             PathManager.Setup(this.Configuration.GetSetupRootDirectoryPath());
 
-            var token = this.Configuration.GetTokenAuthentication();
-            this._signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(token.SecretKey));
-            this._tokenProviderOptions = TokenProviderOptionsFactory.Create(token, this._signingKey);
-            this._tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = this._signingKey,
-                ValidateIssuer = true,
-                ValidIssuer = Const.Issuer,
-                ValidateAudience = true,
-                ValidAudience = token.Audience,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            PasswordManager.SetUp(this.Configuration.GetSection("TokenAuthentication"));
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
 
@@ -93,9 +73,6 @@ namespace ASI.Basecode.WebApp
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
 
-            //Configuration
-            services.Configure<TokenAuthentication>(Configuration.GetSection("TokenAuthentication"));
-            
             // Session
             services.AddSession(options =>
             {
@@ -107,9 +84,6 @@ namespace ASI.Basecode.WebApp
 
             // DI Services
             this.ConfigureOtherServices();
-
-            // Authorization (Add Policy)
-            this.ConfigureAuthorization();
 
             services.Configure<FormOptions>(options =>
             {
@@ -138,8 +112,6 @@ namespace ASI.Basecode.WebApp
 
             this.ConfigureLogger();
 
-            this._app.UseTokenProvider(_tokenProviderOptions);
-
             this._app.UseHttpsRedirection();
             this._app.UseStaticFiles();
 
@@ -149,9 +121,6 @@ namespace ASI.Basecode.WebApp
 
             this._app.UseSession();
             this._app.UseRouting();
-
-            this._app.UseAuthentication();
-            this._app.UseAuthorization();
         }
     }
 }

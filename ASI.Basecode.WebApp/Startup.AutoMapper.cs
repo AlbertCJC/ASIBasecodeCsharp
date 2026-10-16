@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using ASI.Basecode.Data.Models;
-using ASI.Basecode.Services.ServiceModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ASI.Basecode.WebApp
@@ -25,7 +23,7 @@ namespace ASI.Basecode.WebApp
         {
             public AutoMapperProfileConfiguration()
             {
-                CreateMap<UserViewModel, User>();
+                // Add your model mappings here (e.g. CreateMap<ViewModel, Model>();)
             }
         }
     }
