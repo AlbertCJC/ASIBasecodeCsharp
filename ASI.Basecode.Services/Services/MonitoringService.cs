@@ -1,0 +1,212 @@
+using ASI.Basecode.Data;
+using ASI.Basecode.Data.Interfaces;
+using ASI.Basecode.Data.Models;
+using ASI.Basecode.Data.Repositories;
+using ASI.Basecode.Services.Interfaces;
+using ASI.Basecode.Services.ViewModelClasses;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using ErrorMessages = ASI.Basecode.Resources.Messages.Errors;
+
+namespace ASI.Basecode.Services.Services
+{
+    public class MonitoringService : ServiceBase, IMonitoringService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMonitoringRepository _repository;
+        private readonly IMapper _mapper;
+
+        private AllianceDbContext DbContext => (AllianceDbContext)_unitOfWork.Database;
+
+        public MonitoringService(
+            ILoggerFactory loggerFactory,
+            IUnitOfWork unitOfWork,
+            IMonitoringRepository repository,
+            IMapper mapper)
+            : base(loggerFactory)
+        {
+            this._unitOfWork = unitOfWork;
+            this._repository = repository;
+            this._mapper = mapper;
+        }
+
+        public DashboardViewModel GetDashboard()
+        {
+            var (resTotal, resPending, resApproved, resRejected, resCancelled, resCompleted, resExpired) = this._repository.GetReservationCounts();
+            var (borTotal, borActive, borPartial, borReturned, borOverdue, borLost) = this._repository.GetBorrowingCounts();
+            var (eqTotal, eqUnits, eqAvailable) = this._repository.GetEquipmentCounts();
+
+            return new DashboardViewModel
+            {
+                EquipmentRecords = eqTotal,
+                TotalUnits = eqUnits,
+                AvailableUnits = eqAvailable,
+                ReservationTotal = resTotal,
+                ReservationPending = resPending,
+                ReservationApproved = resApproved,
+                ReservationRejected = resRejected,
+                ReservationCancelled = resCancelled,
+                ReservationCompleted = resCompleted,
+                ReservationExpired = resExpired,
+                BorrowingTotal = borTotal,
+                BorrowingActive = borActive,
+                BorrowingPartial = borPartial,
+                BorrowingReturned = borReturned,
+                BorrowingOverdue = borOverdue,
+                BorrowingLost = borLost,
+                RecentAudit = this._repository.GetAuditLogsPaged(null, "All", 1, 8).Items
+                    .Select(a => new AuditRowViewModel
+                    {
+                        OccurredAtUtc = a.OccurredAtUtc,
+                        ActorName = a.ActorUser != null ? a.ActorUser.FirstName + " " + a.ActorUser.LastName : "System",
+                        ActionType = a.ActionType,
+                        EntityType = a.EntityType,
+                        ReferenceNumber = a.ReferenceNumber,
+                        Details = a.Details,
+                    }).ToList(),
+            };
+        }
+
+        public TransactionMonitoringViewModel GetTransactions(string search, string tab, int page, int pageSize)
+        {
+            // Combined, date-descending list of reservation + borrowing events.
+            var reservations = this.DbContext.Reservations
+                .Include(r => r.BorrowerUser)
+                .Include(r => r.Equipment)
+                .Include(r => r.Status)
+                .AsNoTracking()
+                .Select(r => new TransactionRowViewModel
+                {
+                    Type = "Reservation",
+                    Reference = r.ReservationNumber,
+                    Date = r.SubmittedAtUtc,
+                    Actor = r.BorrowerUser.FirstName + " " + r.BorrowerUser.LastName,
+                    Equipment = r.Equipment.EquipmentName,
+                    AssetCode = r.Equipment.AssetCode,
+                    Quantity = r.RequestedQuantity,
+                    Status = r.Status.Description,
+                    StatusCode = r.Status.Code,
+                });
+
+            var borrowings = this.DbContext.Borrowings
+                .Include(b => b.BorrowerUser)
+                .Include(b => b.Equipment)
+                .Include(b => b.Status)
+                .AsNoTracking()
+                .Select(b => new TransactionRowViewModel
+                {
+                    Type = "Borrowing",
+                    Reference = b.TransactionNumber,
+                    Date = b.ReleasedAtUtc,
+                    Actor = b.BorrowerUser.FirstName + " " + b.BorrowerUser.LastName,
+                    Equipment = b.Equipment.EquipmentName,
+                    AssetCode = b.Equipment.AssetCode,
+                    Quantity = b.ReleasedQuantity,
+                    Status = b.Status.Description,
+                    StatusCode = b.Status.Code,
+                });
+
+            var combined = reservations.Concat(borrowings);
+
+            if (tab == "Reservations")
+            {
+                combined = combined.Where(t => t.Type == "Reservation");
+            }
+            else if (tab == "Borrowings")
+            {
+                combined = combined.Where(t => t.Type == "Borrowing");
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                combined = combined.Where(t =>
+                    t.Reference.Contains(term) ||
+                    t.Actor.Contains(term) ||
+                    t.Equipment.Contains(term) ||
+                    t.AssetCode.Contains(term) ||
+                    t.Status.Contains(term));
+            }
+
+            var ordered = combined.OrderByDescending(t => t.Date).ToList();
+
+            const int DefaultPage = 1;
+            const int DefaultPageSize = 15;
+            page = page < 1 ? DefaultPage : page;
+            pageSize = pageSize < 1 ? DefaultPageSize : pageSize;
+
+            var paged = ordered.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var totalCount = ordered.Count;
+
+            return new TransactionMonitoringViewModel
+            {
+                Page = new PagedResult<TransactionRowViewModel>
+                {
+                    Items = paged,
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                },
+                Search = search,
+                Tab = string.IsNullOrWhiteSpace(tab) ? "All" : tab,
+            };
+        }
+
+        public AuditLogsViewModel GetAuditLogs(string search, string entityType, int page, int pageSize)
+        {
+            var result = this._repository.GetAuditLogsPaged(search, entityType, page, pageSize);
+            return new AuditLogsViewModel
+            {
+                Page = new PagedResult<AuditRowViewModel>
+                {
+                    Items = result.Items.Select(a => new AuditRowViewModel
+                    {
+                        AuditLogId = a.AuditLogId,
+                        OccurredAtUtc = a.OccurredAtUtc,
+                        ActorName = a.ActorUser != null ? a.ActorUser.FirstName + " " + a.ActorUser.LastName : "System",
+                        ActionType = a.ActionType,
+                        EntityType = a.EntityType,
+                        ReferenceNumber = a.ReferenceNumber,
+                        Details = a.Details,
+                    }).ToList(),
+                    Page = result.Page,
+                    PageSize = result.PageSize,
+                    TotalCount = result.TotalCount,
+                },
+                Search = search,
+                EntityType = string.IsNullOrWhiteSpace(entityType) ? "All" : entityType,
+                EntityTypes = new List<string> { "All", "Equipment", "User", "Reservation", "Borrowing", "ConditionInspection", "AuditLog" },
+            };
+        }
+
+        public string ExportAuditLogsCsv(string search, string entityType)
+        {
+            var result = this._repository.GetAuditLogsPaged(search, entityType, 1, 100000);
+            var sb = new StringBuilder();
+            sb.AppendLine("OccurredAtUtc,Actor,ActionType,EntityType,ReferenceNumber,Details");
+            foreach (var a in result.Items)
+            {
+                sb.AppendLine($"\"{a.OccurredAtUtc:O}\",\"{a.ActorUser?.FirstName} {a.ActorUser?.LastName}\",\"{a.ActionType}\",\"{a.EntityType}\",\"{a.ReferenceNumber}\",\"{a.Details?.Replace("\"", "\"\"")}\"");
+            }
+            return sb.ToString();
+        }
+
+        public string ExportMovementsCsv(string search)
+        {
+            var result = this._repository.GetMovementsPaged(search, 1, 100000);
+            var sb = new StringBuilder();
+            sb.AppendLine("OccurredAtUtc,Equipment,AssetCode,MovementType,FromState,ToState,Quantity,ReferenceNumber,PerformedBy");
+            foreach (var m in result.Items)
+            {
+                sb.AppendLine($"\"{m.OccurredAtUtc:O}\",\"{m.Equipment?.EquipmentName}\",\"{m.Equipment?.AssetCode}\",\"{m.MovementType}\",\"{m.FromState}\",\"{m.ToState}\",\"{m.Quantity}\",\"{m.ReferenceNumber}\",\"{m.PerformedByUser?.FirstName} {m.PerformedByUser?.LastName}\"");
+            }
+            return sb.ToString();
+        }
+    }
+}

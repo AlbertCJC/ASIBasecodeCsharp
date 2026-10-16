@@ -1,0 +1,129 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model SettingsIndexViewModel
+@{
+    ViewData["Title"] = "System Settings";
+}
+
+<h2 class="mb-3">System Settings</h2>
+
+<h5 class="mb-2">Borrowing Policy (current version)</h5>
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="SavePolicy" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Policy.PolicyVersionId" />
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label asp-for="Policy.MaxBorrowDurationDays" class="form-label fw-semibold">Max Borrow Days</label>
+                    <input asp-for="Policy.MaxBorrowDurationDays" type="number" min="1" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Policy.MaxActiveBorrowingUnits" class="form-label fw-semibold">Max Active Units</label>
+                    <input asp-for="Policy.MaxActiveBorrowingUnits" type="number" min="1" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Policy.OverdueGracePeriodMinutes" class="form-label fw-semibold">Overdue Grace (min)</label>
+                    <input asp-for="Policy.OverdueGracePeriodMinutes" type="number" min="0" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Policy.LowStockThreshold" class="form-label fw-semibold">Low Stock Threshold</label>
+                    <input asp-for="Policy.LowStockThreshold" type="number" min="0" class="form-control" />
+                </div>
+            </div>
+            <div class="form-check form-switch mb-3">
+                <input asp-for="Policy.BlockReservationWhenOverdue" class="form-check-input" type="checkbox" />
+                <label asp-for="Policy.BlockReservationWhenOverdue" class="form-check-label">Block reservations when borrower has overdue items</label>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-success">Publish New Policy Version</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<h5 class="mb-2">Policy History</h5>
+<div class="card mb-4">
+    <table class="table table-sm mb-0">
+        <thead class="table-light"><tr><th>Version</th><th>Effective From</th><th>Current</th><th>Max Days</th><th>Max Units</th></tr></thead>
+        <tbody>
+            @foreach (var p in Model.PolicyHistory)
+            {
+                <tr>
+                    <td>@p.VersionNumber</td>
+                    <td>@p.EffectiveFromUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
+                    <td>@(p.IsCurrent ? "Yes" : "—")</td>
+                    <td>@p.MaxBorrowDurationDays</td>
+                    <td>@p.MaxActiveBorrowingUnits</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h5 class="mb-2">Equipment Categories</h5>
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="AddCategory" method="post" class="row g-2 mb-3">
+            @Html.AntiForgeryToken()
+            <div class="col-md-3"><input name="code" class="form-control" placeholder="Code (e.g. LAPTOP)" /></div>
+            <div class="col-md-5"><input name="name" class="form-control" placeholder="Category name" /></div>
+            <div class="col-md-2"><button type="submit" class="btn btn-sm btn-success">Add</button></div>
+        </form>
+        <table class="table table-sm mb-0">
+            <thead class="table-light"><tr><th>Code</th><th>Name</th><th class="text-center">Actions</th></tr></thead>
+            <tbody>
+                @foreach (var c in Model.Categories)
+                {
+                    <tr>
+                        <td>@c.CategoryCode</td>
+                        <td>@c.CategoryName</td>
+                        <td class="text-center">
+                            <form asp-action="DeleteCategory" asp-route-id="@c.EquipmentCategoryId" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this category?');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<h5 class="mb-2">Locations</h5>
+<div class="card mb-4">
+    <div class="card-body">
+        <form asp-action="AddLocation" method="post" class="row g-2 mb-3">
+            @Html.AntiForgeryToken()
+            <div class="col-md-2"><input name="code" class="form-control" placeholder="Code" /></div>
+            <div class="col-md-4"><input name="name" class="form-control" placeholder="Location name" /></div>
+            <div class="col-md-3">
+                <div class="form-check mt-2">
+                    <input type="checkbox" name="isPickup" value="true" class="form-check-input" id="isPickup" />
+                    <label for="isPickup" class="form-check-label">Pickup point</label>
+                </div>
+            </div>
+            <div class="col-md-2"><button type="submit" class="btn btn-sm btn-success">Add</button></div>
+        </form>
+        <table class="table table-sm mb-0">
+            <thead class="table-light"><tr><th>Code</th><th>Name</th><th>Pickup</th><th>Active</th><th class="text-center">Actions</th></tr></thead>
+            <tbody>
+                @foreach (var l in Model.Locations)
+                {
+                    <tr>
+                        <td>@l.LocationCode</td>
+                        <td>@l.LocationName</td>
+                        <td>@(l.IsPickupLocation ? "Yes" : "No")</td>
+                        <td>@(l.IsActive ? "Yes" : "No")</td>
+                        <td class="text-center">
+                            <form asp-action="DeleteLocation" asp-route-id="@l.LocationId" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this location?');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

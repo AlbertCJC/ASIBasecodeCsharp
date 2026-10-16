@@ -51,6 +51,14 @@ namespace ASI.Basecode.WebApp
             this._services.AddScoped<IReturnProcessingRepository, ReturnProcessingRepository>();
             this._services.AddScoped<IReturnProcessingService, ReturnProcessingService>();
 
+            // Monitoring & audit
+            this._services.AddScoped<IMonitoringRepository, MonitoringRepository>();
+            this._services.AddScoped<IMonitoringService, MonitoringService>();
+
+            // System settings + notifications
+            this._services.AddScoped<ISettingsRepository, SettingsRepository>();
+            this._services.AddScoped<ISettingsService, SettingsService>();
+
             this._services.AddHttpClient();
         }
     }
