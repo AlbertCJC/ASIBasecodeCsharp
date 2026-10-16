@@ -1,0 +1,81 @@
+@using ASI.Basecode.Data.Models
+@model Equipment
+@{
+    ViewData["Title"] = "Equipment Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@Model.EquipmentName <span class="text-muted small">(@Model.AssetCode)</span></h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.EquipmentId" class="btn btn-sm btn-success">Edit</a>
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Equipment Information</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Asset Code</dt>
+                    <dd class="col-sm-8">@Model.AssetCode</dd>
+
+                    <dt class="col-sm-4">Category</dt>
+                    <dd class="col-sm-8">@Model.EquipmentCategory?.CategoryName</dd>
+
+                    <dt class="col-sm-4">Location</dt>
+                    <dd class="col-sm-8">@(Model.Location?.LocationName ?? "—")</dd>
+
+                    <dt class="col-sm-4">Condition</dt>
+                    <dd class="col-sm-8">@(Model.CurrentCondition?.Description ?? "—")</dd>
+
+                    <dt class="col-sm-4">Availability Status</dt>
+                    <dd class="col-sm-8">@(Model.OperationalStatus?.Description ?? "—")</dd>
+
+                    <dt class="col-sm-4">Active</dt>
+                    <dd class="col-sm-8">@(Model.IsActive ? "Yes" : "No")</dd>
+
+                    <dt class="col-sm-4">Created</dt>
+                    <dd class="col-sm-8">@Model.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</dd>
+
+                    <dt class="col-sm-4 mt-2">Description</dt>
+                    <dd class="col-sm-8 mt-2">@(Model.Description ?? "—")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Inventory Balance</div>
+            <div class="card-body">
+                @if (Model.EquipmentInventoryBalance == null)
+                {
+                    <div class="text-muted">No inventory balance recorded for this equipment yet.</div>
+                }
+                else
+                {
+                    <dl class="row mb-0">
+                        <dt class="col-sm-6">Total Quantity</dt>
+                        <dd class="col-sm-6">@Model.EquipmentInventoryBalance.TotalQuantity</dd>
+
+                        <dt class="col-sm-6">Reserved</dt>
+                        <dd class="col-sm-6">@Model.EquipmentInventoryBalance.ReservedQuantity</dd>
+
+                        <dt class="col-sm-6">Released</dt>
+                        <dd class="col-sm-6">@Model.EquipmentInventoryBalance.ReleasedQuantity</dd>
+
+                        <dt class="col-sm-6">Awaiting Inspection</dt>
+                        <dd class="col-sm-6">@Model.EquipmentInventoryBalance.AwaitingInspectionQuantity</dd>
+
+                        <dt class="col-sm-6">Maintenance</dt>
+                        <dd class="col-sm-6">@Model.EquipmentInventoryBalance.MaintenanceQuantity</dd>
+
+                        <dt class="col-sm-6">Unreconciled</dt>
+                        <dd class="col-sm-6">@Model.EquipmentInventoryBalance.UnreconciledQuantity</dd>
+                    </dl>
+                }
+            </div>
+        </div>
+    </div>
+</div>

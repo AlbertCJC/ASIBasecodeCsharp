@@ -1,0 +1,17 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model EquipmentFormViewModel
+@{
+    ViewData["Title"] = "Add Equipment";
+}
+
+<h2 class="mb-3">Add Equipment</h2>
+<p class="text-muted">Fields marked with an asterisk are required.</p>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <partial name="_EquipmentForm" model="Model" />
+        </form>
+    </div>
+</div>

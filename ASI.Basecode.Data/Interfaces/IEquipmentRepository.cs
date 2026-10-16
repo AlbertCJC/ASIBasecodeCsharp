@@ -1,0 +1,49 @@
+using ASI.Basecode.Data.Models;
+using System;
+
+namespace ASI.Basecode.Data.Interfaces
+{
+    /// <summary>
+    /// Repository for equipment aggregate queries and basic data access.
+    /// </summary>
+    public interface IEquipmentRepository
+    {
+        /// <summary>
+        /// Gets a single equipment record with category, location, condition and balance navigations.
+        /// </summary>
+        Equipment GetByIdWithDetails(long equipmentId);
+
+        /// <summary>
+        /// Gets a single equipment record (tracked) for update scenarios.
+        /// </summary>
+        Equipment GetTrackedById(long equipmentId);
+
+        /// <summary>
+        /// Runs the equipment administration list query with search, codebook filters and paging.
+        /// </summary>
+        PagedResult<Equipment> GetPaged(
+            string search,
+            long? categoryId,
+            long? locationId,
+            long? conditionId,
+            long? operationalStatusId,
+            bool? isActive,
+            int page,
+            int pageSize);
+
+        /// <summary>
+        /// Checks whether an asset code is already used (excluding a record being edited).
+        /// </summary>
+        bool AssetCodeExists(string assetCode, long? excludeEquipmentId);
+
+        /// <summary>
+        /// True when borrowings, reservations or inspections reference the equipment.
+        /// </summary>
+        bool HasTransactionReferences(long equipmentId);
+
+        /// <summary>
+        /// Aggregate counters for the administration dashboard cards.
+        /// </summary>
+        EquipmentTotals GetTotals();
+    }
+}

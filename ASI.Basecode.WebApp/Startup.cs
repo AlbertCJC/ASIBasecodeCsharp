@@ -63,10 +63,11 @@ namespace ASI.Basecode.WebApp
             services.AddMemoryCache();
 
             // Register SQL database configuration context as services.
-            services.AddDbContext<AsiBasecodeDBContext>(options =>
+            // AllianceDbContext targets the AllianceDB schema (all CampusPulse entities).
+            services.AddDbContext<AllianceDbContext>(options =>
             {
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection"),
+                    Configuration.GetConnectionString("AllianceConnection"),
                     sqlServerOptions => sqlServerOptions.CommandTimeout(120));
             });
 

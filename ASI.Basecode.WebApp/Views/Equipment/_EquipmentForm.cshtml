@@ -1,0 +1,75 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model EquipmentFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label asp-for="EquipmentName" class="form-label fw-semibold">Equipment Name *</label>
+        <input asp-for="EquipmentName" class="form-control" placeholder="e.g. Dell Latitude 5440 Laptop" />
+        <span asp-validation-for="EquipmentName" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="AssetCode" class="form-label fw-semibold">Asset Code *</label>
+        <input asp-for="AssetCode" class="form-control" placeholder="e.g. LPT-2024-018" />
+        <div class="form-text">Must be unique across the system.</div>
+        <span asp-validation-for="AssetCode" class="text-danger small"></span>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label asp-for="EquipmentCategoryId" class="form-label fw-semibold">Category *</label>
+        <select asp-for="EquipmentCategoryId" class="form-select" asp-items="@(ViewBag.CategoryOptions as SelectList)"></select>
+        <span asp-validation-for="EquipmentCategoryId" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="LocationId" class="form-label fw-semibold">Location</label>
+        <select asp-for="LocationId" class="form-select" asp-items="@(ViewBag.LocationOptions as SelectList)"></select>
+        <span asp-validation-for="LocationId" class="text-danger small"></span>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <label asp-for="TotalQuantity" class="form-label fw-semibold">Total Quantity *</label>
+        <input asp-for="TotalQuantity" type="number" min="1" class="form-control" />
+        @if (Model.EquipmentId > 0)
+        {
+            <div id="committed-hint" class="form-text">Reducing the total below units currently held by borrowers is blocked.</div>
+        }
+        <span asp-validation-for="TotalQuantity" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="OperationalStatusId" class="form-label fw-semibold">Availability Status *</label>
+        <select asp-for="OperationalStatusId" class="form-select" asp-items="@(ViewBag.OperationalStatusOptions as SelectList)"></select>
+        <span asp-validation-for="OperationalStatusId" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="CurrentConditionId" class="form-label fw-semibold">Condition Classification *</label>
+        <select asp-for="CurrentConditionId" class="form-select" asp-items="@(ViewBag.ConditionOptions as SelectList)"></select>
+        <span asp-validation-for="CurrentConditionId" class="text-danger small"></span>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="form-check form-switch mt-2">
+            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+            <label asp-for="IsActive" class="form-check-label">Active (available for reservations)</label>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Description" class="form-label fw-semibold">Description</label>
+    <textarea asp-for="Description" class="form-control" rows="3"
+              placeholder="Configuration, accessories issued and usage notes…"></textarea>
+    <span asp-validation-for="Description" class="text-danger small"></span>
+</div>
+
+<div class="text-end">
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-success">Save Equipment</button>
+</div>

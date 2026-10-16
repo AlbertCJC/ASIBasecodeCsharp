@@ -77,5 +77,50 @@ namespace ASI.Basecode.Resources.Messages {
                 return ResourceManager.GetString("UserExists", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Equipment record was not found. It may have been deleted by another user..
+        /// </summary>
+        public static string EquipmentNotFound {
+            get {
+                return ResourceManager.GetString("EquipmentNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset code must be unique across the system. Another equipment record already uses it..
+        /// </summary>
+        public static string EquipmentAssetCodeDuplicate {
+            get {
+                return ResourceManager.GetString("EquipmentAssetCodeDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New total quantity is lower than units currently held for borrowers (reserved or released)..
+        /// </summary>
+        public static string EquipmentQuantityBelowCommitted {
+            get {
+                return ResourceManager.GetString("EquipmentQuantityBelowCommitted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This equipment record cannot be deleted because borrowing, reservation or inspection records reference it..
+        /// </summary>
+        public static string EquipmentDeleteBlocked {
+            get {
+                return ResourceManager.GetString("EquipmentDeleteBlocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This equipment record was changed by another user while you were editing. Reload and try again..
+        /// </summary>
+        public static string EquipmentUpdateConflict {
+            get {
+                return ResourceManager.GetString("EquipmentUpdateConflict", resourceCulture);
+            }
+        }
     }
 }

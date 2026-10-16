@@ -3,13 +3,13 @@ using ASI.Basecode.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace Basecode.Data.Repositories
+namespace ASI.Basecode.Data.Repositories
 {
     public class BaseRepository
     {
         protected IUnitOfWork UnitOfWork { get; set; }
 
-        protected AsiBasecodeDBContext Context => (AsiBasecodeDBContext)UnitOfWork.Database;
+        protected AllianceDbContext Context => (AllianceDbContext)UnitOfWork.Database;
 
         public BaseRepository(IUnitOfWork unitOfWork)
         {

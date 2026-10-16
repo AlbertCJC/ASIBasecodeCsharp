@@ -43,6 +43,7 @@
             progressBar: true
         };
     </script>
+    @await Html.PartialAsync("_ToastrMessages")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

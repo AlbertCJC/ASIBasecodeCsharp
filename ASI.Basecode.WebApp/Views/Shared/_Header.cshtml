@@ -7,6 +7,16 @@
              onclick="window.location.href = '@Url.Action("Index", "Home")';">
     </div>
     <div class="logosec">
+        <ul class="nav align-self-center">
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Home" asp-action="Index">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Equipment" asp-action="Index">Equipment Administration</a>
+            </li>
+        </ul>
+    </div>
+    <div class="logosec">
         <div class="mr-20 hover-pointer" style="position: relative">
             <div class="dp">
                 <img src="~/img/profile-logo.png"
