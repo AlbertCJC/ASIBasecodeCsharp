@@ -1,0 +1,72 @@
+@using ASI.Basecode.Data.Models
+@model User
+@{
+    ViewData["Title"] = "User Details";
+    var statusBadgeClass = Model.AccountStatus?.Code switch
+    {
+        "ACTIVE" => "bg-success-subtle text-success",
+        "INACTIVE" => "bg-secondary-subtle text-secondary",
+        "SUSPENDED" => "bg-danger-subtle text-danger",
+        "LOCKED" => "bg-warning-subtle text-warning",
+        _ => "bg-secondary-subtle text-secondary",
+    };
+    var initials = (string.IsNullOrWhiteSpace(Model.FirstName) ? string.Empty : Model.FirstName.Trim().Substring(0, 1).ToUpperInvariant())
+        + (string.IsNullOrWhiteSpace(Model.LastName) ? string.Empty : Model.LastName.Trim().Substring(0, 1).ToUpperInvariant());
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@Model.FirstName @Model.LastName <span class="text-muted small">(@Model.AccountIdentifier)</span></h2>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-sm btn-success">Edit</a>
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Profile</div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge rounded-circle bg-primary-subtle text-primary me-3 p-3 fs-5"
+                          style="min-width: 3.2rem; min-height: 3.2rem; display: inline-flex; align-items: center; justify-content: center;">
+                        @initials
+                    </span>
+                    <div>
+                        <div class="fw-semibold">@(Model.FirstName) @(Model.LastName)</div>
+                        <div class="text-muted small">@Model.SchoolEmail</div>
+                    </div>
+                </div>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">School / Account ID</dt>
+                    <dd class="col-sm-8">@Model.AccountIdentifier</dd>
+
+                    <dt class="col-sm-4">School Email</dt>
+                    <dd class="col-sm-8">@Model.SchoolEmail</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Account</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Role</dt>
+                    <dd class="col-sm-8">@(Model.Role?.RoleName ?? "—")</dd>
+
+                    <dt class="col-sm-4">Department</dt>
+                    <dd class="col-sm-8">@(Model.Department?.DepartmentName ?? "—")</dd>
+
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge @statusBadgeClass">@(Model.AccountStatus?.Description ?? "—")</span>
+                    </dd>
+
+                    <dt class="col-sm-4">Created</dt>
+                    <dd class="col-sm-8">@Model.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

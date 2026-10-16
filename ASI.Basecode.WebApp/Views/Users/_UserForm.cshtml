@@ -1,0 +1,56 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model UserFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label asp-for="FirstName" class="form-label fw-semibold">First Name *</label>
+        <input asp-for="FirstName" class="form-control" placeholder="e.g. Maria" />
+        <span asp-validation-for="FirstName" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="LastName" class="form-label fw-semibold">Last Name *</label>
+        <input asp-for="LastName" class="form-control" placeholder="e.g. Santos" />
+        <span asp-validation-for="LastName" class="text-danger small"></span>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label asp-for="AccountIdentifier" class="form-label fw-semibold">Account Identifier *</label>
+        <input asp-for="AccountIdentifier" class="form-control" placeholder="e.g. 2023-104857 or EMP-2021-0134" />
+        <div class="form-text">School or employee ID. Must be unique across the system.</div>
+        <span asp-validation-for="AccountIdentifier" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="SchoolEmail" class="form-label fw-semibold">School Email *</label>
+        <input asp-for="SchoolEmail" type="email" class="form-control" placeholder="e.g. ml.santos@university.edu.ph" />
+        <div class="form-text">Must be unique across the system.</div>
+        <span asp-validation-for="SchoolEmail" class="text-danger small"></span>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <label asp-for="RoleId" class="form-label fw-semibold">Role *</label>
+        <select asp-for="RoleId" class="form-select" asp-items="@(ViewBag.RoleOptions as SelectList)"></select>
+        <span asp-validation-for="RoleId" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="DepartmentId" class="form-label fw-semibold">Department</label>
+        <select asp-for="DepartmentId" class="form-select" asp-items="@(ViewBag.DepartmentOptions as SelectList)"></select>
+        <div class="form-text">Optional. For most users it is their college or office.</div>
+        <span asp-validation-for="DepartmentId" class="text-danger small"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="AccountStatusId" class="form-label fw-semibold">Account Status *</label>
+        <select asp-for="AccountStatusId" class="form-select" asp-items="@(ViewBag.StatusOptions as SelectList)"></select>
+        <span asp-validation-for="AccountStatusId" class="text-danger small"></span>
+    </div>
+</div>
+
+<div class="text-end">
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    <button type="submit" class="btn btn-success">Save User</button>
+</div>

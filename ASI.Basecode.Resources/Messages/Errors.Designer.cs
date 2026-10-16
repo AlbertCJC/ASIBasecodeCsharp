@@ -122,5 +122,50 @@ namespace ASI.Basecode.Resources.Messages {
                 return ResourceManager.GetString("EquipmentUpdateConflict", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User account was not found. It may have been deleted by another user..
+        /// </summary>
+        public static string UserNotFound {
+            get {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account identifier must be unique across the system. Another user account already uses it..
+        /// </summary>
+        public static string UserIdentifierDuplicate {
+            get {
+                return ResourceManager.GetString("UserIdentifierDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to School email must be unique across the system. Another user account already uses it..
+        /// </summary>
+        public static string UserEmailDuplicate {
+            get {
+                return ResourceManager.GetString("UserEmailDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This user account cannot be deleted because borrowing, reservation or inventory movement records reference it..
+        /// </summary>
+        public static string UserDeleteBlocked {
+            get {
+                return ResourceManager.GetString("UserDeleteBlocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This user account was changed by another user while you were editing. Reload and try again..
+        /// </summary>
+        public static string UserUpdateConflict {
+            get {
+                return ResourceManager.GetString("UserUpdateConflict", resourceCulture);
+            }
+        }
     }
 }

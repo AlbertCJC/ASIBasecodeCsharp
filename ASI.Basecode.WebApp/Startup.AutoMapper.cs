@@ -38,6 +38,22 @@ namespace ASI.Basecode.WebApp
                     .ForMember(d => d.CreatedAtUtc, o => o.Ignore())
                     .ForMember(d => d.RowVersion, o => o.Ignore())
                     .ForMember(d => d.IsActive, o => o.MapFrom(s => s.IsActive));
+
+                // User management
+                this.CreateMap<Data.Models.User, Services.ViewModelClasses.UserListViewModel>()
+                    .ForMember(d => d.RoleName, o => o.MapFrom(s => s.Role.RoleName))
+                    .ForMember(d => d.RoleCode, o => o.MapFrom(s => s.Role.RoleCode))
+                    .ForMember(d => d.DepartmentName, o => o.MapFrom(s => s.Department != null ? s.Department.DepartmentName : null))
+                    .ForMember(d => d.AccountStatusCode, o => o.MapFrom(s => s.AccountStatus.Code))
+                    .ForMember(d => d.AccountStatusDescription, o => o.MapFrom(s => s.AccountStatus.Description));
+
+                this.CreateMap<Data.Models.User, Services.ViewModelClasses.UserFormViewModel>();
+
+                this.CreateMap<Services.ViewModelClasses.UserFormViewModel, Data.Models.User>()
+                    .ForMember(d => d.UserId, o => o.Ignore())
+                    .ForMember(d => d.CreatedAtUtc, o => o.Ignore())
+                    .ForMember(d => d.RowVersion, o => o.Ignore())
+                    .ForMember(d => d.PasswordHash, o => o.Ignore());
             }
         }
     }

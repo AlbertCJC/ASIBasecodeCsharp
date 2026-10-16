@@ -35,6 +35,10 @@ namespace ASI.Basecode.WebApp
             this._services.AddScoped<IEquipmentRepository, EquipmentRepository>();
             this._services.AddScoped<IEquipmentService, EquipmentService>();
 
+            // User management
+            this._services.AddScoped<IUserRepository, UserRepository>();
+            this._services.AddScoped<IUserService, UserService>();
+
             this._services.AddHttpClient();
         }
     }

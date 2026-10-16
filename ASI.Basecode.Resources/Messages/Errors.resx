@@ -138,4 +138,19 @@
   <data name="EquipmentUpdateConflict" xml:space="preserve">
     <value>This equipment record was changed by another user while you were editing. Reload and try again.</value>
   </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User account was not found. It may have been deleted by another user.</value>
+  </data>
+  <data name="UserIdentifierDuplicate" xml:space="preserve">
+    <value>Account identifier must be unique across the system. Another user account already uses it.</value>
+  </data>
+  <data name="UserEmailDuplicate" xml:space="preserve">
+    <value>School email must be unique across the system. Another user account already uses it.</value>
+  </data>
+  <data name="UserDeleteBlocked" xml:space="preserve">
+    <value>This user account cannot be deleted because borrowing, reservation or inventory movement records reference it.</value>
+  </data>
+  <data name="UserUpdateConflict" xml:space="preserve">
+    <value>This user account was changed by another user while you were editing. Reload and try again.</value>
+  </data>
 </root>
