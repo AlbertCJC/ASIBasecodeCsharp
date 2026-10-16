@@ -1,0 +1,60 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model ReleaseFormViewModel
+@{
+    ViewData["Title"] = "Equipment Release";
+}
+@{
+    var ctx = ViewBag.Context as ReleaseContextViewModel;
+}
+
+<h2 class="mb-3">Equipment Release</h2>
+
+@if (ctx != null)
+{
+    <div class="card mb-3">
+        <div class="card-header">Reservation Summary</div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Reservation #</dt><dd class="col-sm-9">@ctx.ReservationNumber</dd>
+                <dt class="col-sm-3">Borrower</dt><dd class="col-sm-9">@ctx.BorrowerName (@ctx.BorrowerRole)</dd>
+                <dt class="col-sm-3">Equipment</dt><dd class="col-sm-9">@ctx.EquipmentName (@ctx.AssetCode) — @ctx.CategoryName</dd>
+                <dt class="col-sm-3">Pickup Point</dt><dd class="col-sm-9">@(ctx.PickupLocationName ?? "—")</dd>
+                <dt class="col-sm-3">Approved Qty</dt><dd class="col-sm-9">@ctx.ApprovedQuantity</dd>
+                <dt class="col-sm-3">Expected Return</dt><dd class="col-sm-9">@ctx.ExpectedReturnAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
+            </dl>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Release" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReservationId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label asp-for="ReleasedQuantity" class="form-label fw-semibold">Released Quantity *</label>
+                    <input asp-for="ReleasedQuantity" type="number" min="1" class="form-control" />
+                    <span asp-validation-for="ReleasedQuantity" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="ReleaseConditionId" class="form-label fw-semibold">Condition at Release *</label>
+                    <select asp-for="ReleaseConditionId" class="form-select" asp-items="@(ViewBag.ConditionOptions as SelectList)"></select>
+                    <span asp-validation-for="ReleaseConditionId" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ReleaseNotes" class="form-label fw-semibold">Release Notes</label>
+                <textarea asp-for="ReleaseNotes" class="form-control" rows="3" placeholder="Accessories issued, condition remarks..."></textarea>
+            </div>
+
+            <div class="text-end">
+                <a asp-action="Reservations" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-success">Release Equipment</button>
+            </div>
+        </form>
+    </div>
+</div>

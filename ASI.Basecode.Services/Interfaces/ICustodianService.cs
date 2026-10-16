@@ -1,0 +1,22 @@
+using ASI.Basecode.Services.ViewModelClasses;
+using System.Collections.Generic;
+
+namespace ASI.Basecode.Services.Interfaces
+{
+    public interface ICustodianService
+    {
+        CustodianReservationsIndexViewModel GetReservationsIndex(string search, long? statusId, int page, int pageSize);
+
+        ReservationReviewViewModel GetReservationReview(long reservationId);
+
+        (bool Success, string Error) Approve(long reservationId, string notes);
+
+        (bool Success, string Error) Reject(long reservationId, string reason);
+
+        ReleaseContextViewModel GetReleaseContext(long reservationId);
+
+        (bool Success, string Error, long BorrowingId) Release(ReleaseFormViewModel form);
+
+        ActiveBorrowingsIndexViewModel GetActiveBorrowings(string search, int page, int pageSize);
+    }
+}

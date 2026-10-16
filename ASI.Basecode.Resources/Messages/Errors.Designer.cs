@@ -329,5 +329,50 @@ namespace ASI.Basecode.Resources.Messages {
                 return ResourceManager.GetString("ReservationOperationConflict", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Reservation record was not found..
+        /// </summary>
+        public static string CustodianReservationNotFound {
+            get {
+                return ResourceManager.GetString("CustodianReservationNotFound", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to This reservation is no longer pending and cannot be changed..
+        /// </summary>
+        public static string CustodianReservationNotPending {
+            get {
+                return ResourceManager.GetString("CustodianReservationNotPending", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Only approved reservations that have not yet been released can be released..
+        /// </summary>
+        public static string CustodianReleaseNotApproved {
+            get {
+                return ResourceManager.GetString("CustodianReleaseNotApproved", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Released quantity must be at least 1 and cannot exceed the approved quantity..
+        /// </summary>
+        public static string CustodianReleaseQuantityInvalid {
+            get {
+                return ResourceManager.GetString("CustodianReleaseQuantityInvalid", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to A rejection reason is required..
+        /// </summary>
+        public static string CustodianRejectReasonRequired {
+            get {
+                return ResourceManager.GetString("CustodianRejectReasonRequired", resourceCulture);
+            }
+        }
     }
 }

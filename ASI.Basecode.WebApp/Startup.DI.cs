@@ -43,6 +43,10 @@ namespace ASI.Basecode.WebApp
             this._services.AddScoped<IReservationRepository, ReservationRepository>();
             this._services.AddScoped<IReservationService, ReservationService>();
 
+            // Custodian console
+            this._services.AddScoped<ICustodianRepository, CustodianRepository>();
+            this._services.AddScoped<ICustodianService, CustodianService>();
+
             this._services.AddHttpClient();
         }
     }

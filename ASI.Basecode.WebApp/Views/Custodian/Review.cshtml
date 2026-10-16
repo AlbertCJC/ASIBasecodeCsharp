@@ -1,0 +1,91 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model ReservationReviewViewModel
+@{
+    ViewData["Title"] = "Reservation Review";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Reservation Review — @Model.ReservationNumber</h2>
+    <a asp-action="Reservations" class="btn btn-sm btn-outline-secondary">Back to list</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Borrower</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Name</dt><dd class="col-sm-8">@Model.BorrowerName</dd>
+                    <dt class="col-sm-4">Role</dt><dd class="col-sm-8">@Model.BorrowerRole</dd>
+                    <dt class="col-sm-4">Department</dt><dd class="col-sm-8">@(Model.BorrowerDepartment ?? "—")</dd>
+                    <dt class="col-sm-4">Email</dt><dd class="col-sm-8">@Model.BorrowerEmail</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Equipment</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Name</dt><dd class="col-sm-8">@Model.EquipmentName</dd>
+                    <dt class="col-sm-4">Asset Code</dt><dd class="col-sm-8">@Model.AssetCode</dd>
+                    <dt class="col-sm-4">Category</dt><dd class="col-sm-8">@Model.CategoryName</dd>
+                    <dt class="col-sm-4">Location</dt><dd class="col-sm-8">@(Model.LocationName ?? "—")</dd>
+                    <dt class="col-sm-4">Pickup Point</dt><dd class="col-sm-8">@(Model.PickupLocationName ?? "—")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Reservation Details</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge @(Model.StatusCode == "PENDING" ? "bg-warning text-dark" : Model.StatusCode == "APPROVED" ? "bg-info text-dark" : Model.StatusCode == "COMPLETED" ? "bg-success" : "bg-secondary")">
+                            @Model.StatusDescription
+                        </span>
+                    </dd>
+                    <dt class="col-sm-4">Submitted</dt><dd class="col-sm-8">@Model.SubmittedAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
+                    <dt class="col-sm-4">Quantity</dt><dd class="col-sm-8">@Model.RequestedQuantity (approved: @Model.ApprovedQuantity, held: @Model.HeldQuantity)</dd>
+                    <dt class="col-sm-4">Start</dt><dd class="col-sm-8">@Model.RequestedStartAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
+                    <dt class="col-sm-4">Expected Return</dt><dd class="col-sm-8">@Model.ExpectedReturnAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
+                    <dt class="col-sm-4">Purpose</dt><dd class="col-sm-8">@(Model.Purpose ?? "—")</dd>
+                    <dt class="col-sm-4">Notes</dt><dd class="col-sm-8">@(Model.AdditionalNotes ?? "—")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">Decision</div>
+            <div class="card-body">
+                @if (Model.CanApprove || Model.CanReject)
+                {
+                    <form asp-action="Approve" asp-route-id="@Model.ReservationId" method="post" class="mb-3">
+                        @Html.AntiForgeryToken()
+                        <label class="form-label">Approval notes (optional)</label>
+                        <textarea name="notes" class="form-control mb-2" rows="2"></textarea>
+                        <button type="submit" class="btn btn-success">Approve Reservation</button>
+                    </form>
+                    <form asp-action="Reject" asp-route-id="@Model.ReservationId" method="post">
+                        @Html.AntiForgeryToken()
+                        <label class="form-label">Rejection reason (required)</label>
+                        <textarea name="reason" class="form-control mb-2" rows="2" required></textarea>
+                        <button type="submit" class="btn btn-danger">Reject Reservation</button>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-muted">This reservation is no longer pending. Current status: @Model.StatusDescription.</div>
+                    @if (Model.StatusCode == "APPROVED")
+                    {
+                        <a asp-action="Release" asp-route-id="@Model.ReservationId" class="btn btn-success mt-2">Release Equipment</a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
