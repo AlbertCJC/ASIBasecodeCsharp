@@ -167,5 +167,167 @@ namespace ASI.Basecode.Resources.Messages {
                 return ResourceManager.GetString("UserUpdateConflict", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Equipment record for this reservation was not found or is not available for borrowing..
+        /// </summary>
+        public static string ReservationEquipmentNotFound {
+            get {
+                return ResourceManager.GetString("ReservationEquipmentNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reservation record was not found or you are not allowed to view it..
+        /// </summary>
+        public static string ReservationNotFound {
+            get {
+                return ResourceManager.GetString("ReservationNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quantity must be at least 1..
+        /// </summary>
+        public static string ReservationQuantityInvalid {
+            get {
+                return ResourceManager.GetString("ReservationQuantityInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quantity exceeds the maximum units per borrower allowed by the borrowing policy..
+        /// </summary>
+        public static string ReservationQuantityAboveMax {
+            get {
+                return ResourceManager.GetString("ReservationQuantityAboveMax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quantity exceeds the units currently available for this equipment..
+        /// </summary>
+        public static string ReservationQuantityAboveAvailable {
+            get {
+                return ResourceManager.GetString("ReservationQuantityAboveAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Borrowing date and time must be in the future..
+        /// </summary>
+        public static string ReservationPastDate {
+            get {
+                return ResourceManager.GetString("ReservationPastDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reservation requests require a minimum lead time of 1 day before the borrowing date..
+        /// </summary>
+        public static string ReservationLeadTimeTooShort {
+            get {
+                return ResourceManager.GetString("ReservationLeadTimeTooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reservation requests may not be submitted more than 30 days ahead of time..
+        /// </summary>
+        public static string ReservationTooFarAhead {
+            get {
+                return ResourceManager.GetString("ReservationTooFarAhead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Borrowing duration exceeds the maximum allowed by the borrowing policy for your account..
+        /// </summary>
+        public static string ReservationDurationTooLong {
+            get {
+                return ResourceManager.GetString("ReservationDurationTooLong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You already have the maximum number of open reservation requests. Complete or cancel one before submitting another..
+        /// </summary>
+        public static string ReservationActiveLimitReached {
+            get {
+                return ResourceManager.GetString("ReservationActiveLimitReached", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have an overdue borrowing item. Return it to the property office before submitting a new reservation..
+        /// </summary>
+        public static string ReservationOverdueBlock {
+            get {
+                return ResourceManager.GetString("ReservationOverdueBlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must confirm both acknowledgements before submitting a reservation..
+        /// </summary>
+        public static string ReservationMissingAck {
+            get {
+                return ResourceManager.GetString("ReservationMissingAck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Borrowing and expected return dates and times are required..
+        /// </summary>
+        public static string ReservationScheduleMissing {
+            get {
+                return ResourceManager.GetString("ReservationScheduleMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pickup point is required and must be an active pickup location..
+        /// </summary>
+        public static string ReservationPickupLocationInvalid {
+            get {
+                return ResourceManager.GetString("ReservationPickupLocationInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This reservation can no longer be cancelled because it is past the pending or approved stage..
+        /// </summary>
+        public static string ReservationNotCancellable {
+            get {
+                return ResourceManager.GetString("ReservationNotCancellable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No operator is selected for this session. Pick an operator on the Switch Operator screen first..
+        /// </summary>
+        public static string ReservationOperatorNotSet {
+            get {
+                return ResourceManager.GetString("ReservationOperatorNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The equipment inventory changed while your request was being submitted. Reload and try again..
+        /// </summary>
+        public static string ReservationCreateConflict {
+            get {
+                return ResourceManager.GetString("ReservationCreateConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This reservation was changed by another user while you were working on it. Reload and try again..
+        /// </summary>
+        public static string ReservationOperationConflict {
+            get {
+                return ResourceManager.GetString("ReservationOperationConflict", resourceCulture);
+            }
+        }
     }
 }

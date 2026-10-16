@@ -2,6 +2,7 @@ using ASI.Basecode.Data.Interfaces;
 using ASI.Basecode.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ASI.Basecode.Data.Repositories
@@ -144,6 +145,21 @@ namespace ASI.Basecode.Data.Repositories
                 Faculty = this.Context.Users.Count(u => u.Role.RoleCode == "FACULTY"),
                 CustodianAdmins = this.Context.Users.Count(u => u.Role.RoleCode == "TECHNICIAN" || u.Role.RoleCode == "ADMIN"),
             };
+        }
+
+        /// <inheritdoc />
+        public List<User> GetOperatorOptions()
+        {
+            // AccountStatus is included because the list-row map resolves its code/description.
+            return this.Context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Department)
+                .Include(u => u.AccountStatus)
+                .AsNoTracking()
+                .OrderBy(u => u.LastName)
+                .ThenBy(u => u.FirstName)
+                .ThenBy(u => u.UserId)
+                .ToList();
         }
     }
 }

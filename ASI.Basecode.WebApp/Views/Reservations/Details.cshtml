@@ -1,0 +1,130 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model ReservationDetailsViewModel
+@{
+    ViewData["Title"] = "Reservation Details";
+}
+
+@functions {
+    private static string GetStatusBadgeClass(string statusCode)
+    {
+        return statusCode switch
+        {
+            "PENDING" => "bg-warning-subtle text-warning",
+            "APPROVED" => "bg-success-subtle text-success",
+            "REJECTED" => "bg-danger-subtle text-danger",
+            "CANCELLED" => "bg-secondary-subtle text-secondary",
+            "COMPLETED" => "bg-info-subtle text-info",
+            "EXPIRED" => "bg-secondary-subtle text-secondary",
+            _ => "bg-secondary-subtle text-secondary",
+        };
+    }
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Reservation Details</h2>
+        <div class="text-muted">@Model.ReservationNumber</div>
+    </div>
+    <div class="d-flex gap-2">
+        @if (Model.CanCancel)
+        {
+            <form method="post" asp-controller="Reservations" asp-action="Cancel" asp-route-id="@Model.ReservationId"
+                  onsubmit="return confirm('Cancel this reservation request?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-danger">Cancel Reservation</button>
+            </form>
+        }
+        <a asp-controller="Reservations" asp-action="Mine" class="btn btn-outline-secondary">Back to My Reservations</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card mb-4">
+            <div class="card-header bg-light"><strong>Request Status</strong></div>
+            <div class="card-body">
+                <span class="badge @GetStatusBadgeClass(Model.StatusCode) fs-6">@Model.StatusDescription</span>
+                <ul class="list-unstyled mt-3 mb-0 text-muted small">
+                    <li class="mb-1">
+                        <i class="fa-solid fa-paper-plane"></i> Submitted @Model.SubmittedAtUtc.ToString("dd MMM yyyy HH:mm") UTC
+                    </li>
+                    @if (Model.CompletedAtUtc.HasValue)
+                    {
+                        <li class="mb-1">
+                            <i class="fa-solid fa-flag-checkered"></i> Completed @Model.CompletedAtUtc.Value.ToString("dd MMM yyyy HH:mm") UTC
+                        </li>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.BorrowerName))
+                    {
+                        <li class="mb-1"><i class="fa-solid fa-user"></i> Borrower: @Model.BorrowerName</li>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.PolicyVersionNumber))
+                    {
+                        <li class="mb-1"><i class="fa-solid fa-scale-balanced"></i> Policy version: @Model.PolicyVersionNumber</li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-light"><strong>Equipment &amp; Schedule</strong></div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6 text-muted small">Equipment</div>
+                    <div class="col-md-6">@Model.EquipmentName <span class="text-muted small">(@Model.AssetCode)</span></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 text-muted small">Category</div>
+                    <div class="col-md-6">@Model.CategoryName</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 text-muted small">Pickup Point</div>
+                    <div class="col-md-6">@(Model.PickupLocationName ?? "—")</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 text-muted small">Borrowing Start</div>
+                    <div class="col-md-6">@Model.RequestedStartAtUtc.ToString("dd MMM yyyy HH:mm") UTC</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 text-muted small">Expected Return</div>
+                    <div class="col-md-6">@Model.ExpectedReturnAtUtc.ToString("dd MMM yyyy HH:mm") UTC</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card mb-4">
+            <div class="card-header bg-light"><strong>Quantities</strong></div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr>
+                        <td class="text-muted">Requested quantity</td>
+                        <td class="text-end fw-semibold">@Model.RequestedQuantity</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Approved quantity</td>
+                        <td class="text-end">@(Model.ApprovedQuantity > 0 ? Model.ApprovedQuantity.ToString() : "—")</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Units held for pickup</td>
+                        <td class="text-end">@(Model.HeldQuantity > 0 ? Model.HeldQuantity.ToString() : "—")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-light"><strong>Purpose &amp; Notes</strong></div>
+            <div class="card-body">
+                <div class="mb-2 fw-semibold">Purpose of Borrowing</div>
+                <div class="mb-3">@Model.Purpose</div>
+                <div class="mb-2 fw-semibold">Acknowledgements</div>
+                <ul class="list-unstyled mb-0 text-muted small">
+                    <li class="mb-1"><i class="fa-solid fa-check text-success"></i> Borrowing rules acknowledged at submission.</li>
+                    <li><i class="fa-solid fa-check text-success"></i> Overdue/accountability terms acknowledged at submission.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

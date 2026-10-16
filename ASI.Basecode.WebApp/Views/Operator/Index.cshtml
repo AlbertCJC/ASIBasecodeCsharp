@@ -1,0 +1,34 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model Microsoft.AspNetCore.Mvc.Rendering.SelectList
+@{
+    ViewData["Title"] = "Switch Operator";
+}
+
+<h2 class="mb-3">Switch Operator</h2>
+<p class="text-muted">
+    Web authentication is not wired in this scaffold. Pick the user this session acts as —
+    audit entries and borrower reservations are recorded against this account.
+</p>
+
+<div class="card" style="max-width: 42rem;">
+    <div class="card-body">
+        <form asp-controller="Operator" asp-action="Select" method="post">
+            @Html.AntiForgeryToken()
+            @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl as string))
+            {
+                <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+            }
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Acting user</label>
+                <select name="userId" class="form-select" asp-items="ViewBag.UserOptions"></select>
+                <div class="form-text mt-2">
+                    Current operator: @(!string.IsNullOrEmpty(ViewBag.CurrentName as string) ? ViewBag.CurrentName : "none selected")
+                </div>
+            </div>
+            <div class="text-end">
+                <a asp-controller="Operator" asp-action="Index" class="btn btn-outline-secondary">Refresh</a>
+                <button type="submit" class="btn btn-success">Switch Operator</button>
+            </div>
+        </form>
+    </div>
+</div>

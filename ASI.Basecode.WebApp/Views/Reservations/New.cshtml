@@ -1,0 +1,157 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model ReservationFormContextViewModel
+@{
+    ViewData["Title"] = "Reservation Form";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Reservation Form</h2>
+        <div class="text-muted">Complete the details below. Your request will be queued for custodian review.</div>
+    </div>
+    <a asp-controller="Reservations" asp-action="Available" class="btn btn-outline-secondary">Cancel</a>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header bg-light">
+                <strong>Reservation Details</strong>
+                <div class="text-muted small">All fields marked with an asterisk are required.</div>
+            </div>
+            <div class="card-body">
+                <form asp-controller="Reservations" asp-action="New" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Form.EquipmentId" />
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Form.Quantity" class="form-label fw-semibold">Quantity *</label>
+                            <input asp-for="Form.Quantity" type="number" class="form-control" value="@Model.Form.Quantity" min="1" />
+                            <div class="form-text">Maximum 3 units per borrower.</div>
+                            <span asp-validation-for="Form.Quantity" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Pickup Point *</label>
+                            <select asp-for="Form.PickupLocationId" class="form-select" asp-items="@(ViewBag.PickupOptions as SelectList)"></select>
+                            <span asp-validation-for="Form.PickupLocationId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mt-4 mb-3" style="letter-spacing: 0.08em;">BORROWING SCHEDULE</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Form.BorrowingDate" class="form-label fw-semibold">Borrowing Date *</label>
+                            <input asp-for="Form.BorrowingDate" type="date" class="form-control" />
+                            <span asp-validation-for="Form.BorrowingDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Form.BorrowingTime" class="form-label fw-semibold">Borrowing Time *</label>
+                            <input asp-for="Form.BorrowingTime" type="time" class="form-control" />
+                            <span asp-validation-for="Form.BorrowingTime" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mt-4 mb-3" style="letter-spacing: 0.08em;">EXPECTED RETURN</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Form.ExpectedReturnDate" class="form-label fw-semibold">Expected Return Date *</label>
+                            <input asp-for="Form.ExpectedReturnDate" type="date" class="form-control" />
+                            <span asp-validation-for="Form.ExpectedReturnDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Form.ExpectedReturnTime" class="form-label fw-semibold">Expected Return Time *</label>
+                            <input asp-for="Form.ExpectedReturnTime" type="time" class="form-control" />
+                            <span asp-validation-for="Form.ExpectedReturnTime" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mt-4 mb-3" style="letter-spacing: 0.08em;">PURPOSE &amp; NOTES</h6>
+                    <div class="mb-3">
+                        <label asp-for="Form.Purpose" class="form-label fw-semibold">Purpose of Borrowing *</label>
+                        <textarea asp-for="Form.Purpose" class="form-control" rows="3"
+                                  placeholder="Be specific — the custodian uses this to prioritise competing requests."></textarea>
+                        <span asp-validation-for="Form.Purpose" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.AdditionalNotes" class="form-label fw-semibold">Additional Notes</label>
+                        <textarea asp-for="Form.AdditionalNotes" class="form-control" rows="2"
+                                  placeholder="Optional remarks for the custodian (e.g. accessories needed, alternate pickup time)."></textarea>
+                        <span asp-validation-for="Form.AdditionalNotes" class="text-danger small"></span>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" asp-for="Form.AcknowledgeRules" />
+                        <label class="form-check-label" asp-for="Form.AcknowledgeRules">
+                            I acknowledge the borrowing rules and accept accountability for damage, loss or late return of this equipment.
+                        </label>
+                    </div>
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" asp-for="Form.AcknowledgeResponsibility" />
+                        <label class="form-check-label" asp-for="Form.AcknowledgeResponsibility">
+                            I understand that overdue items may suspend my borrowing privileges for the remainder of the term.
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-controller="Reservations" asp-action="Available" class="btn btn-outline-secondary">Back</a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-check"></i> Submit Reservation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card mb-4">
+            <div class="card-header bg-light"><strong>Selected Equipment</strong></div>
+            <div class="card-body">
+                @if (Model.Equipment != null)
+                {
+                    <div class="mb-3">
+                        <div class="fs-5 fw-bold">@Model.Equipment.EquipmentName</div>
+                        <div class="text-muted small">@Model.Equipment.AssetCode · @Model.Equipment.CategoryName</div>
+                        @if (!string.IsNullOrEmpty(Model.Equipment.LocationName))
+                        {
+                            <div class="text-muted small"><i class="fa-solid fa-location-dot"></i> @Model.Equipment.LocationName</div>
+                        }
+                    </div>
+                    <table class="table table-sm mb-0">
+                        <tr>
+                            <td class="text-muted">Available quantity</td>
+                            <td class="text-end fw-semibold">@Model.Equipment.AvailableUnits of @Model.Equipment.TotalQuantity units</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Condition</td>
+                            <td class="text-end">@Model.Equipment.ConditionName</td>
+                        </tr>
+                    </table>
+                }
+                else
+                {
+                    <span class="text-muted">Equipment summary unavailable.</span>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-light"><strong>Review Time</strong></div>
+            <div class="card-body">
+                <div class="text-muted small mb-2">
+                    <i class="fa-regular fa-clock"></i>
+                    Requests are normally reviewed within one working day. You will be notified once a decision is made.
+                </div>
+                <div class="text-muted small mb-0">
+                    <i class="fa-solid fa-shield"></i>
+                    Cancellation window — you may cancel this request any time while it is still Pending or Approved.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

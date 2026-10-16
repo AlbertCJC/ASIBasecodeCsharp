@@ -196,6 +196,14 @@ namespace ASI.Basecode.Services.Services
                 .ToList();
         }
 
+        /// <inheritdoc />
+        public List<UserListViewModel> GetOperatorOptions()
+        {
+            return this._userRepository.GetOperatorOptions()
+                .Select(entity => this._mapper.Map<UserListViewModel>(entity))
+                .ToList();
+        }
+
         private (bool Success, string Error, long UserId) Create(UserFormViewModel form)
         {
             var entity = this._mapper.Map<User>(form);

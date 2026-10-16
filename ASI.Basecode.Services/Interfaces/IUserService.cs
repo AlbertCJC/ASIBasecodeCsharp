@@ -56,5 +56,10 @@ namespace ASI.Basecode.Services.Interfaces
         /// Account status dropdown options.
         /// </summary>
         List<LookupViewModel> GetAccountStatusOptions();
+
+        /// <summary>
+        /// All user accounts with role info (ordered by name) for the operator switcher.
+        /// </summary>
+        List<UserListViewModel> GetOperatorOptions();
     }
 }

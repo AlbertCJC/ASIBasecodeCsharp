@@ -1,5 +1,6 @@
 using ASI.Basecode.Data.Models;
 using System;
+using System.Collections.Generic;
 
 namespace ASI.Basecode.Data.Interfaces
 {
@@ -50,5 +51,10 @@ namespace ASI.Basecode.Data.Interfaces
         /// Aggregate counters for the user management KPI cards.
         /// </summary>
         UserTotals GetTotals();
+
+        /// <summary>
+        /// All user accounts (with role) ordered by name — source for the operator switcher.
+        /// </summary>
+        List<User> GetOperatorOptions();
     }
 }

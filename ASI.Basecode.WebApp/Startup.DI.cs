@@ -39,6 +39,10 @@ namespace ASI.Basecode.WebApp
             this._services.AddScoped<IUserRepository, UserRepository>();
             this._services.AddScoped<IUserService, UserService>();
 
+            // Borrower reservations
+            this._services.AddScoped<IReservationRepository, ReservationRepository>();
+            this._services.AddScoped<IReservationService, ReservationService>();
+
             this._services.AddHttpClient();
         }
     }

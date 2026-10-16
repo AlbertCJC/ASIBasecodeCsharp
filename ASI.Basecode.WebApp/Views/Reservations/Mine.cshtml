@@ -1,0 +1,88 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model ReservationMineViewModel
+@{
+    ViewData["Title"] = "My Reservations";
+}
+
+@functions {
+    private static string GetStatusBadgeClass(string statusCode)
+    {
+        return statusCode switch
+        {
+            "PENDING" => "bg-warning-subtle text-warning",
+            "APPROVED" => "bg-success-subtle text-success",
+            "REJECTED" => "bg-danger-subtle text-danger",
+            "CANCELLED" => "bg-secondary-subtle text-secondary",
+            "COMPLETED" => "bg-info-subtle text-info",
+            "EXPIRED" => "bg-secondary-subtle text-secondary",
+            _ => "bg-secondary-subtle text-secondary",
+        };
+    }
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">My Reservations</h2>
+        <div class="text-muted">
+            @(string.IsNullOrEmpty(Model.OperatorName) ? "No operator selected for this session." : $"Acting borrower: {Model.OperatorName}")
+        </div>
+    </div>
+    <a asp-controller="Reservations" asp-action="Available" class="btn btn-success">+ New Reservation</a>
+</div>
+
+<div class="card">
+    <table class="table table-hover mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Reservation #</th>
+                <th>Equipment</th>
+                <th>Qty</th>
+                <th>Pickup Point</th>
+                <th>Borrowing Start</th>
+                <th>Expected Return</th>
+                <th>Status</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Reservations.Any())
+            {
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        You have not submitted any reservation requests yet.
+                        Browse the <a asp-controller="Reservations" asp-action="Available">equipment availability</a> list to create one.
+                    </td>
+                </tr>
+            }
+            @foreach (var reservation in Model.Reservations)
+            {
+                <tr>
+                    <td class="text-nowrap">@reservation.ReservationNumber</td>
+                    <td>
+                        <strong>@reservation.EquipmentName</strong>
+                        <div class="text-muted small text-nowrap">@reservation.AssetCode</div>
+                    </td>
+                    <td>@reservation.RequestedQuantity</td>
+                    <td>@(reservation.PickupLocationName ?? "—")</td>
+                    <td>@reservation.RequestedStartAtUtc.ToString("dd MMM yyyy HH:mm")</td>
+                    <td>@reservation.ExpectedReturnAtUtc.ToString("dd MMM yyyy HH:mm")</td>
+                    <td>
+                        <span class="badge @GetStatusBadgeClass(reservation.StatusCode)">@reservation.StatusDescription</span>
+                    </td>
+                    <td class="text-center text-nowrap">
+                        <a asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.ReservationId"
+                           class="btn btn-sm btn-outline-primary">View</a>
+                        @if (reservation.CanCancel)
+                        {
+                            <form method="post" asp-controller="Reservations" asp-action="Cancel" asp-route-id="@reservation.ReservationId" class="d-inline"
+                                  onsubmit="return confirm('Cancel this reservation request?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
