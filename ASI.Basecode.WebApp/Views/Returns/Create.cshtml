@@ -1,0 +1,61 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model ReturnFormViewModel
+@{
+    ViewData["Title"] = "Record Return";
+}
+@{
+    var ctx = ViewBag.Context as ReturnFormContextViewModel;
+}
+
+<h2 class="mb-3">Record Return</h2>
+
+@if (ctx != null)
+{
+    <div class="card mb-3">
+        <div class="card-header">Borrowing Summary</div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Transaction #</dt><dd class="col-sm-9">@ctx.TransactionNumber</dd>
+                <dt class="col-sm-3">Borrower</dt><dd class="col-sm-9">@ctx.BorrowerName</dd>
+                <dt class="col-sm-3">Equipment</dt><dd class="col-sm-9">@ctx.EquipmentName (@ctx.AssetCode)</dd>
+                <dt class="col-sm-3">Released</dt><dd class="col-sm-9">@ctx.ReleasedQuantity (already returned: @ctx.AlreadyReturned)</dd>
+                <dt class="col-sm-3">Due</dt><dd class="col-sm-9 @(ctx.IsOverdue ? "text-danger fw-bold" : "")">@ctx.DueAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm") @(ctx.IsOverdue ? $"(overdue {ctx.DaysOverdue} d)" : "")</dd>
+            </dl>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="BorrowingId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label asp-for="ReturnedQuantity" class="form-label fw-semibold">Returned Quantity *</label>
+                    <input asp-for="ReturnedQuantity" type="number" min="1" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="ReturnedAtUtc" class="form-label fw-semibold">Return Date/Time</label>
+                    <input asp-for="ReturnedAtUtc" type="datetime-local" class="form-control" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Notes" class="form-label fw-semibold">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="text-end">
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-success">Record Return</button>
+                @if (ctx != null)
+                {
+                    <a asp-action="Inspect" asp-route-id="@ctx.Form.BorrowingId" class="btn btn-outline-primary ms-2">Record Inspection</a>
+                }
+            </div>
+        </form>
+    </div>
+</div>

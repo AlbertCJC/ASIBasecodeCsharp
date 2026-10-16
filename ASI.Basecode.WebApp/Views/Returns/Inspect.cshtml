@@ -1,0 +1,65 @@
+@using ASI.Basecode.Services.ViewModelClasses
+@model InspectionFormViewModel
+@{
+    ViewData["Title"] = "Condition Inspection";
+}
+@{
+    var ctx = ViewBag.Context as ReturnFormContextViewModel;
+}
+
+<h2 class="mb-3">Condition Inspection</h2>
+
+@if (ctx != null)
+{
+    <div class="card mb-3">
+        <div class="card-header">Borrowing Summary</div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Transaction #</dt><dd class="col-sm-9">@ctx.TransactionNumber</dd>
+                <dt class="col-sm-3">Borrower</dt><dd class="col-sm-9">@ctx.BorrowerName</dd>
+                <dt class="col-sm-3">Equipment</dt><dd class="col-sm-9">@ctx.EquipmentName (@ctx.AssetCode)</dd>
+                <dt class="col-sm-3">Released</dt><dd class="col-sm-9">@ctx.ReleasedQuantity (returned: @ctx.AlreadyReturned)</dd>
+            </dl>
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Inspect" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="BorrowingId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label asp-for="InspectedQuantity" class="form-label fw-semibold">Inspected Quantity *</label>
+                    <input asp-for="InspectedQuantity" type="number" min="1" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="CurrentConditionId" class="form-label fw-semibold">Current Condition *</label>
+                    <select asp-for="CurrentConditionId" class="form-select" asp-items="@(ViewBag.ConditionOptions as SelectList)"></select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="InspectionStatusId" class="form-label fw-semibold">Inspection Status</label>
+                    <select asp-for="InspectionStatusId" class="form-select" asp-items="@(ViewBag.InspectionStatusOptions as SelectList)"></select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="InspectionNotes" class="form-label fw-semibold">Inspection Notes</label>
+                <textarea asp-for="InspectionNotes" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Condition Photos (up to 6, max 5 MB each)</label>
+                <input type="file" name="photos" multiple accept="image/*" class="form-control" />
+            </div>
+
+            <div class="text-end">
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-success">Record Inspection</button>
+            </div>
+        </form>
+    </div>
+</div>

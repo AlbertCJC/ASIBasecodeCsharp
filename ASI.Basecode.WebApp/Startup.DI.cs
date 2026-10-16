@@ -47,6 +47,10 @@ namespace ASI.Basecode.WebApp
             this._services.AddScoped<ICustodianRepository, CustodianRepository>();
             this._services.AddScoped<ICustodianService, CustodianService>();
 
+            // Return processing + condition inspection
+            this._services.AddScoped<IReturnProcessingRepository, ReturnProcessingRepository>();
+            this._services.AddScoped<IReturnProcessingService, ReturnProcessingService>();
+
             this._services.AddHttpClient();
         }
     }
