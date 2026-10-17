@@ -4,85 +4,71 @@
     ViewData["Title"] = "My Reservations";
 }
 
-@functions {
-    private static string GetStatusBadgeClass(string statusCode)
-    {
-        return statusCode switch
-        {
-            "PENDING" => "bg-warning-subtle text-warning",
-            "APPROVED" => "bg-success-subtle text-success",
-            "REJECTED" => "bg-danger-subtle text-danger",
-            "CANCELLED" => "bg-secondary-subtle text-secondary",
-            "COMPLETED" => "bg-info-subtle text-info",
-            "EXPIRED" => "bg-secondary-subtle text-secondary",
-            _ => "bg-secondary-subtle text-secondary",
-        };
-    }
-}
-
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="cp-page-header">
     <div>
-        <h2 class="mb-1">My Reservations</h2>
-        <div class="text-muted">
-            @(string.IsNullOrEmpty(Model.OperatorName) ? "No operator selected for this session." : $"Acting borrower: {Model.OperatorName}")
-        </div>
+        <h1 class="cp-page-title">My Reservations</h1>
+        <p class="cp-page-subtitle">Track your equipment reservation requests.</p>
     </div>
-    <a asp-controller="Reservations" asp-action="Available" class="btn btn-success">+ New Reservation</a>
+    <div class="cp-page-actions">
+        <a asp-action="Available" class="cp-btn cp-btn-primary"><i class="fa-solid fa-plus"></i> New Reservation</a>
+    </div>
 </div>
 
-<div class="card">
-    <table class="table table-hover mb-0">
-        <thead class="table-light">
-            <tr>
-                <th>Reservation #</th>
-                <th>Equipment</th>
-                <th>Qty</th>
-                <th>Pickup Point</th>
-                <th>Borrowing Start</th>
-                <th>Expected Return</th>
-                <th>Status</th>
-                <th class="text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Reservations.Any())
-            {
+@if (!Model.Reservations.Any())
+{
+    <div class="cp-empty-state">
+        <div class="cp-empty-state-icon"><i class="fa-solid fa-calendar-xmark"></i></div>
+        <div class="cp-empty-state-text">You have no reservations yet.</div>
+        <a asp-action="Available" class="cp-btn cp-btn-primary" style="margin-top:12px;">Browse Equipment</a>
+    </div>
+}
+else
+{
+    <div class="cp-table-wrap">
+        <table class="cp-table">
+            <thead>
                 <tr>
-                    <td colspan="8" class="text-center text-muted py-4">
-                        You have not submitted any reservation requests yet.
-                        Browse the <a asp-controller="Reservations" asp-action="Available">equipment availability</a> list to create one.
-                    </td>
+                    <th>Reservation #</th>
+                    <th>Equipment</th>
+                    <th class="text-center">Qty</th>
+                    <th>Pickup Point</th>
+                    <th>Status</th>
+                    <th>Start</th>
+                    <th>Expected Return</th>
+                    <th class="text-center">Actions</th>
                 </tr>
-            }
-            @foreach (var reservation in Model.Reservations)
-            {
-                <tr>
-                    <td class="text-nowrap">@reservation.ReservationNumber</td>
-                    <td>
-                        <strong>@reservation.EquipmentName</strong>
-                        <div class="text-muted small text-nowrap">@reservation.AssetCode</div>
-                    </td>
-                    <td>@reservation.RequestedQuantity</td>
-                    <td>@(reservation.PickupLocationName ?? "—")</td>
-                    <td>@reservation.RequestedStartAtUtc.ToString("dd MMM yyyy HH:mm")</td>
-                    <td>@reservation.ExpectedReturnAtUtc.ToString("dd MMM yyyy HH:mm")</td>
-                    <td>
-                        <span class="badge @GetStatusBadgeClass(reservation.StatusCode)">@reservation.StatusDescription</span>
-                    </td>
-                    <td class="text-center text-nowrap">
-                        <a asp-controller="Reservations" asp-action="Details" asp-route-id="@reservation.ReservationId"
-                           class="btn btn-sm btn-outline-primary">View</a>
-                        @if (reservation.CanCancel)
-                        {
-                            <form method="post" asp-controller="Reservations" asp-action="Cancel" asp-route-id="@reservation.ReservationId" class="d-inline"
-                                  onsubmit="return confirm('Cancel this reservation request?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
-                            </form>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Reservations)
+                {
+                    <tr>
+                        <td><strong>@r.ReservationNumber</strong></td>
+                        <td>
+                            @r.EquipmentName
+                            <div style="font-size:10.8px;color:var(--color-text-lighter);">@r.AssetCode</div>
+                        </td>
+                        <td class="text-center">@r.RequestedQuantity</td>
+                        <td>@(r.PickupLocationName ?? "—")</td>
+                        <td>
+                            <span class="cp-badge @(r.StatusCode == "PENDING" ? "cp-badge-warning" : r.StatusCode == "APPROVED" ? "cp-badge-info" : r.StatusCode == "COMPLETED" ? "cp-badge-success" : r.StatusCode == "CANCELLED" ? "cp-badge-neutral" : "cp-badge-error")">
+                                @r.StatusDescription
+                            </span>
+                        </td>
+                        <td style="font-size:11.6px;">@r.RequestedStartAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                        <td style="font-size:11.6px;">@r.ExpectedReturnAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@r.ReservationId" class="cp-btn cp-btn-secondary cp-btn-sm">View</a>
+                            @if (r.CanCancel)
+                            {
+                                <form asp-action="Cancel" asp-route-id="@r.ReservationId" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="cp-btn cp-btn-danger cp-btn-sm" onclick="return confirm('Cancel this reservation?');">Cancel</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

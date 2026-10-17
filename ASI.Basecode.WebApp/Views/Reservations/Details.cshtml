@@ -3,126 +3,115 @@
 @{
     ViewData["Title"] = "Reservation Details";
 }
-
 @functions {
     private static string GetStatusBadgeClass(string statusCode)
     {
         return statusCode switch
         {
-            "PENDING" => "bg-warning-subtle text-warning",
-            "APPROVED" => "bg-success-subtle text-success",
-            "REJECTED" => "bg-danger-subtle text-danger",
-            "CANCELLED" => "bg-secondary-subtle text-secondary",
-            "COMPLETED" => "bg-info-subtle text-info",
-            "EXPIRED" => "bg-secondary-subtle text-secondary",
-            _ => "bg-secondary-subtle text-secondary",
+            "PENDING" => "cp-badge-warning",
+            "APPROVED" => "cp-badge-info",
+            "REJECTED" => "cp-badge-error",
+            "CANCELLED" => "cp-badge-neutral",
+            "COMPLETED" => "cp-badge-success",
+            "EXPIRED" => "cp-badge-neutral",
+            _ => "cp-badge-neutral",
         };
     }
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="cp-page-header">
     <div>
-        <h2 class="mb-1">Reservation Details</h2>
-        <div class="text-muted">@Model.ReservationNumber</div>
+        <h1 class="cp-page-title">Reservation Details</h1>
+        <p class="cp-page-subtitle">@Model.ReservationNumber</p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="cp-page-actions">
         @if (Model.CanCancel)
         {
-            <form method="post" asp-controller="Reservations" asp-action="Cancel" asp-route-id="@Model.ReservationId"
+            <form method="post" asp-controller="Reservations" asp-action="Cancel" asp-route-id="@Model.ReservationId" style="display:inline;"
                   onsubmit="return confirm('Cancel this reservation request?');">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-outline-danger">Cancel Reservation</button>
+                <button type="submit" class="cp-btn cp-btn-danger cp-btn-sm">Cancel Reservation</button>
             </form>
         }
-        <a asp-controller="Reservations" asp-action="Mine" class="btn btn-outline-secondary">Back to My Reservations</a>
+        <a asp-controller="Reservations" asp-action="Mine" class="cp-btn cp-btn-secondary cp-btn-sm">Back to My Reservations</a>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-lg-7">
-        <div class="card mb-4">
-            <div class="card-header bg-light"><strong>Request Status</strong></div>
-            <div class="card-body">
-                <span class="badge @GetStatusBadgeClass(Model.StatusCode) fs-6">@Model.StatusDescription</span>
-                <ul class="list-unstyled mt-3 mb-0 text-muted small">
-                    <li class="mb-1">
-                        <i class="fa-solid fa-paper-plane"></i> Submitted @Model.SubmittedAtUtc.ToString("dd MMM yyyy HH:mm") UTC
-                    </li>
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:16px;">
+        <!-- Request Status -->
+        <div class="cp-card">
+            <div class="cp-card-header">Request Status</div>
+            <div>
+                <span class="cp-badge @GetStatusBadgeClass(Model.StatusCode)" style="font-size:13px;padding:4px 12px;">@Model.StatusDescription</span>
+                <ul style="list-style:none;padding:0;margin:12px 0 0;font-size:12px;color:var(--color-text-gray);">
+                    <li style="margin-bottom:4px;"><i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i> Submitted @Model.SubmittedAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</li>
                     @if (Model.CompletedAtUtc.HasValue)
                     {
-                        <li class="mb-1">
-                            <i class="fa-solid fa-flag-checkered"></i> Completed @Model.CompletedAtUtc.Value.ToString("dd MMM yyyy HH:mm") UTC
-                        </li>
+                        <li style="margin-bottom:4px;"><i class="fa-solid fa-flag-checkered" style="margin-right:6px;"></i> Completed @Model.CompletedAtUtc.Value.ToLocalTime().ToString("dd MMM yyyy HH:mm")</li>
                     }
                     @if (!string.IsNullOrEmpty(Model.BorrowerName))
                     {
-                        <li class="mb-1"><i class="fa-solid fa-user"></i> Borrower: @Model.BorrowerName</li>
+                        <li style="margin-bottom:4px;"><i class="fa-solid fa-user" style="margin-right:6px;"></i> Borrower: @Model.BorrowerName</li>
                     }
                     @if (!string.IsNullOrEmpty(Model.PolicyVersionNumber))
                     {
-                        <li class="mb-1"><i class="fa-solid fa-scale-balanced"></i> Policy version: @Model.PolicyVersionNumber</li>
+                        <li style="margin-bottom:4px;"><i class="fa-solid fa-scale-balanced" style="margin-right:6px;"></i> Policy version: @Model.PolicyVersionNumber</li>
                     }
                 </ul>
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header bg-light"><strong>Equipment &amp; Schedule</strong></div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6 text-muted small">Equipment</div>
-                    <div class="col-md-6">@Model.EquipmentName <span class="text-muted small">(@Model.AssetCode)</span></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6 text-muted small">Category</div>
-                    <div class="col-md-6">@Model.CategoryName</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6 text-muted small">Pickup Point</div>
-                    <div class="col-md-6">@(Model.PickupLocationName ?? "—")</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6 text-muted small">Borrowing Start</div>
-                    <div class="col-md-6">@Model.RequestedStartAtUtc.ToString("dd MMM yyyy HH:mm") UTC</div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6 text-muted small">Expected Return</div>
-                    <div class="col-md-6">@Model.ExpectedReturnAtUtc.ToString("dd MMM yyyy HH:mm") UTC</div>
-                </div>
+        <!-- Equipment & Schedule -->
+        <div class="cp-card">
+            <div class="cp-card-header">Equipment &amp; Schedule</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:12.5px;">
+                <div style="color:var(--color-text-gray);">Equipment</div>
+                <div>@Model.EquipmentName <span style="color:var(--color-text-lighter);font-size:11px;">(@Model.AssetCode)</span></div>
+                <div style="color:var(--color-text-gray);">Category</div>
+                <div>@Model.CategoryName</div>
+                <div style="color:var(--color-text-gray);">Pickup Point</div>
+                <div>@(Model.PickupLocationName ?? "—")</div>
+                <div style="color:var(--color-text-gray);">Borrowing Start</div>
+                <div>@Model.RequestedStartAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</div>
+                <div style="color:var(--color-text-gray);">Expected Return</div>
+                <div>@Model.ExpectedReturnAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-5">
-        <div class="card mb-4">
-            <div class="card-header bg-light"><strong>Quantities</strong></div>
-            <div class="card-body">
-                <table class="table table-sm mb-0">
-                    <tr>
-                        <td class="text-muted">Requested quantity</td>
-                        <td class="text-end fw-semibold">@Model.RequestedQuantity</td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted">Approved quantity</td>
-                        <td class="text-end">@(Model.ApprovedQuantity > 0 ? Model.ApprovedQuantity.ToString() : "—")</td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted">Units held for pickup</td>
-                        <td class="text-end">@(Model.HeldQuantity > 0 ? Model.HeldQuantity.ToString() : "—")</td>
-                    </tr>
-                </table>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+        <!-- Quantities -->
+        <div class="cp-card">
+            <div class="cp-card-header">Quantities</div>
+            <div style="font-size:12.5px;">
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--color-border);">
+                    <span style="color:var(--color-text-gray);">Requested quantity</span>
+                    <span style="font-weight:600;">@Model.RequestedQuantity</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--color-border);">
+                    <span style="color:var(--color-text-gray);">Approved quantity</span>
+                    <span>@(Model.ApprovedQuantity > 0 ? Model.ApprovedQuantity.ToString() : "—")</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                    <span style="color:var(--color-text-gray);">Units held for pickup</span>
+                    <span>@(Model.HeldQuantity > 0 ? Model.HeldQuantity.ToString() : "—")</span>
+                </div>
             </div>
         </div>
 
-        <div class="card mb-4">
-            <div class="card-header bg-light"><strong>Purpose &amp; Notes</strong></div>
-            <div class="card-body">
-                <div class="mb-2 fw-semibold">Purpose of Borrowing</div>
-                <div class="mb-3">@Model.Purpose</div>
-                <div class="mb-2 fw-semibold">Acknowledgements</div>
-                <ul class="list-unstyled mb-0 text-muted small">
-                    <li class="mb-1"><i class="fa-solid fa-check text-success"></i> Borrowing rules acknowledged at submission.</li>
-                    <li><i class="fa-solid fa-check text-success"></i> Overdue/accountability terms acknowledged at submission.</li>
+        <!-- Purpose & Notes -->
+        <div class="cp-card">
+            <div class="cp-card-header">Purpose &amp; Notes</div>
+            <div style="margin-bottom:12px;">
+                <div style="font-size:12px;font-weight:600;color:var(--color-text-soft);margin-bottom:4px;">Purpose of Borrowing</div>
+                <div style="font-size:12.5px;">@Model.Purpose</div>
+            </div>
+            <div>
+                <div style="font-size:12px;font-weight:600;color:var(--color-text-soft);margin-bottom:4px;">Acknowledgements</div>
+                <ul style="list-style:none;padding:0;margin:0;font-size:11.6px;color:var(--color-text-gray);">
+                    <li style="margin-bottom:4px;"><i class="fa-solid fa-check" style="color:var(--color-success);margin-right:6px;"></i> Borrowing rules acknowledged at submission.</li>
+                    <li><i class="fa-solid fa-check" style="color:var(--color-success);margin-right:6px;"></i> Overdue/accountability terms acknowledged at submission.</li>
                 </ul>
             </div>
         </div>
