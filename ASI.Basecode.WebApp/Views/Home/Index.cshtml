@@ -1,8 +1,234 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = null;
+    ViewData["Title"] = "CampusPulse — Equipment & Reservation Portal";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
+</head>
+<body>
+<div class="lp-page">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <!-- Top navigation -->
+    <nav class="lp-nav">
+        <div class="lp-nav-brand">
+            <div class="lp-nav-logo">CP</div>
+            <div>
+                <div class="lp-nav-title">CampusPulse</div>
+                <div class="lp-nav-subtitle">Equipment &amp; Reservation Portal</div>
+            </div>
+        </div>
+        <div class="lp-nav-links">
+            <a href="#overview">Overview</a>
+            <a href="#availability">Equipment</a>
+            <a href="#rules">Borrowing Rules</a>
+            <a href="#support">Support</a>
+        </div>
+        <div class="lp-nav-actions">
+            <a href="/Users/Index" class="lp-btn lp-btn-outline">Sign In</a>
+            <a href="/Users/Create" class="lp-btn lp-btn-primary">Create Account</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="lp-hero" id="overview">
+        <div class="lp-hero-content">
+            <span class="lp-hero-badge">Property Office · A.Y. 2026–2027</span>
+            <h1>Reserve campus equipment<br />without the paper queue.</h1>
+            <p class="lp-hero-desc">
+                CampusPulse is the university's equipment operations portal. Check live availability
+                of laptops, projectors, cameras, speakers and lab tools, then reserve a borrowing
+                window in a few clicks. Custodians review, release and inspect every item; borrowers
+                track every request from Pending to Completed.
+            </p>
+            <div class="lp-hero-actions">
+                <a href="/Users/Index" class="lp-btn lp-btn-primary lp-btn-lg">Sign In to CampusPulse</a>
+                <a href="/Users/Create" class="lp-btn lp-btn-outline lp-btn-lg">Create Account</a>
+            </div>
+            <div class="lp-hero-stats">
+                <div class="lp-stat">
+                    <div class="lp-stat-value">1,284</div>
+                    <div class="lp-stat-label">Items in catalog</div>
+                </div>
+                <div class="lp-stat">
+                    <div class="lp-stat-value">6</div>
+                    <div class="lp-stat-label">Equipment categories</div>
+                </div>
+                <div class="lp-stat">
+                    <div class="lp-stat-value">&le;24h</div>
+                    <div class="lp-stat-label">Typical approval time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live availability snapshot -->
+        <div class="lp-availability-card">
+            <div class="lp-availability-header">
+                <span class="lp-availability-title">Live Availability Snapshot</span>
+                <span class="lp-availability-updated">Updated 07 Sep 2026 · 09:41 AM</span>
+            </div>
+            <div class="lp-availability-row">
+                <div>
+                    <div class="lp-availability-name">Laptops &amp; Notebooks</div>
+                    <div class="lp-availability-bar"><div class="lp-availability-bar-fill" style="width: 70%;"></div></div>
+                </div>
+                <div class="lp-availability-count">42 / 60</div>
+            </div>
+            <div class="lp-availability-row">
+                <div>
+                    <div class="lp-availability-name">Projectors</div>
+                    <div class="lp-availability-bar"><div class="lp-availability-bar-fill" style="width: 75%;"></div></div>
+                </div>
+                <div class="lp-availability-count">18 / 24</div>
+            </div>
+            <div class="lp-availability-row">
+                <div>
+                    <div class="lp-availability-name">Cameras &amp; DSLR</div>
+                    <div class="lp-availability-bar"><div class="lp-availability-bar-fill" style="width: 64%;"></div></div>
+                </div>
+                <div class="lp-availability-count">9 / 14</div>
+            </div>
+            <div class="lp-availability-row">
+                <div>
+                    <div class="lp-availability-name">Audio &amp; Speakers</div>
+                    <div class="lp-availability-bar"><div class="lp-availability-bar-fill" style="width: 69%;"></div></div>
+                </div>
+                <div class="lp-availability-count">11 / 16</div>
+            </div>
+            <div class="lp-availability-row">
+                <div>
+                    <div class="lp-availability-name">Laboratory Tools</div>
+                    <div class="lp-availability-bar"><div class="lp-availability-bar-fill" style="width: 68%;"></div></div>
+                </div>
+                <div class="lp-availability-count">27 / 40</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How borrowing works -->
+    <section class="lp-section" id="rules">
+        <h2 class="lp-section-title">How Borrowing Works</h2>
+        <p class="lp-section-subtitle">Four steps from request to return.</p>
+        <div class="lp-steps">
+            <div class="lp-step">
+                <div class="lp-step-number">1</div>
+                <div class="lp-step-title">Submit a reservation</div>
+                <div class="lp-step-desc">Choose equipment, schedule and purpose</div>
+            </div>
+            <div class="lp-step">
+                <div class="lp-step-number">2</div>
+                <div class="lp-step-title">Custodian review</div>
+                <div class="lp-step-desc">Approved or rejected within one working day</div>
+            </div>
+            <div class="lp-step">
+                <div class="lp-step-number">3</div>
+                <div class="lp-step-title">Pick up equipment</div>
+                <div class="lp-step-desc">Present your school ID at the Property Office</div>
+            </div>
+            <div class="lp-step">
+                <div class="lp-step-number">4</div>
+                <div class="lp-step-title">Return &amp; inspection</div>
+                <div class="lp-step-desc">Condition is recorded and the record is closed</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What you can do -->
+    <section class="lp-section">
+        <h2 class="lp-section-title">What you can do</h2>
+        <p class="lp-section-subtitle">One portal for borrowers, custodians and administrators.</p>
+        <div class="lp-features">
+            <div class="lp-feature-card">
+                <div class="lp-feature-icon">&#128269;</div>
+                <div class="lp-feature-title">Check availability</div>
+                <div class="lp-feature-desc">Browse the catalog by category, location and condition before you request anything.</div>
+            </div>
+            <div class="lp-feature-card">
+                <div class="lp-feature-icon">&#128197;</div>
+                <div class="lp-feature-title">Reserve a schedule</div>
+                <div class="lp-feature-desc">Pick your borrowing and expected return date and time, then submit with a stated purpose.</div>
+            </div>
+            <div class="lp-feature-card">
+                <div class="lp-feature-icon">&#128203;</div>
+                <div class="lp-feature-title">Track your requests</div>
+                <div class="lp-feature-desc">Follow each request from Pending through Approved, Ready for Release and Completed.</div>
+            </div>
+            <div class="lp-feature-card">
+                <div class="lp-feature-icon">&#128214;</div>
+                <div class="lp-feature-title">Review your history</div>
+                <div class="lp-feature-desc">Every returned item, final condition and closed transaction stays on your record.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Equipment categories -->
+    <section class="lp-section" id="availability">
+        <h2 class="lp-section-title">Equipment categories</h2>
+        <p class="lp-section-subtitle">Sign in to see live quantities and reserve.</p>
+        <div class="lp-categories">
+            <div class="lp-category-card">
+                <div>
+                    <div class="lp-category-name">Laptops &amp; Notebooks</div>
+                    <div class="lp-category-count">60 units on catalog</div>
+                </div>
+                <span class="lp-category-badge">Available</span>
+            </div>
+            <div class="lp-category-card">
+                <div>
+                    <div class="lp-category-name">Projectors</div>
+                    <div class="lp-category-count">24 units on catalog</div>
+                </div>
+                <span class="lp-category-badge">Available</span>
+            </div>
+            <div class="lp-category-card">
+                <div>
+                    <div class="lp-category-name">Cameras &amp; DSLR</div>
+                    <div class="lp-category-count">14 units on catalog</div>
+                </div>
+                <span class="lp-category-badge">Available</span>
+            </div>
+            <div class="lp-category-card">
+                <div>
+                    <div class="lp-category-name">Audio &amp; Speakers</div>
+                    <div class="lp-category-count">16 units on catalog</div>
+                </div>
+                <span class="lp-category-badge">Available</span>
+            </div>
+            <div class="lp-category-card">
+                <div>
+                    <div class="lp-category-name">Laboratory Tools</div>
+                    <div class="lp-category-count">40 units on catalog</div>
+                </div>
+                <span class="lp-category-badge">Available</span>
+            </div>
+            <div class="lp-category-card">
+                <div>
+                    <div class="lp-category-name">Network Devices</div>
+                    <div class="lp-category-count">12 units on catalog</div>
+                </div>
+                <span class="lp-category-badge">Available</span>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="/Reservations/Available" class="lp-btn lp-btn-outline">View full catalog</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="lp-footer" id="support">
+        CampusPulse · Property Office · A.Y. 2026–2027 &nbsp;|&nbsp;
+        <a href="#">Support</a> &nbsp;|&nbsp;
+        <a href="#">Borrowing Rules</a> &nbsp;|&nbsp;
+        <a href="/Users/Index">Sign In</a>
+    </footer>
+
 </div>
+</body>
+</html>
