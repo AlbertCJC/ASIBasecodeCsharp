@@ -7,53 +7,59 @@
     var ctx = ViewBag.Context as ReturnFormContextViewModel;
 }
 
-<h2 class="mb-3">Record Return</h2>
+<div class="cp-page-header">
+    <div>
+        <h1 class="cp-page-title">Record Return</h1>
+        <p class="cp-page-subtitle">Record the return of borrowed equipment.</p>
+    </div>
+    <div class="cp-page-actions">
+        <a asp-action="Index" class="cp-btn cp-btn-secondary cp-btn-sm">Back to list</a>
+    </div>
+</div>
 
 @if (ctx != null)
 {
-    <div class="card mb-3">
-        <div class="card-header">Borrowing Summary</div>
-        <div class="card-body">
-            <dl class="row mb-0">
-                <dt class="col-sm-3">Transaction #</dt><dd class="col-sm-9">@ctx.TransactionNumber</dd>
-                <dt class="col-sm-3">Borrower</dt><dd class="col-sm-9">@ctx.BorrowerName</dd>
-                <dt class="col-sm-3">Equipment</dt><dd class="col-sm-9">@ctx.EquipmentName (@ctx.AssetCode)</dd>
-                <dt class="col-sm-3">Released</dt><dd class="col-sm-9">@ctx.ReleasedQuantity (already returned: @ctx.AlreadyReturned)</dd>
-                <dt class="col-sm-3">Due</dt><dd class="col-sm-9 @(ctx.IsOverdue ? "text-danger fw-bold" : "")">@ctx.DueAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm") @(ctx.IsOverdue ? $"(overdue {ctx.DaysOverdue} d)" : "")</dd>
-            </dl>
+    <div class="cp-card" style="margin-bottom:16px;">
+        <div class="cp-card-header">Borrowing Summary</div>
+        <div style="font-size:12.5px;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;">
+            <div style="color:var(--color-text-gray);">Transaction #</div><div>@ctx.TransactionNumber</div>
+            <div style="color:var(--color-text-gray);">Borrower</div><div>@ctx.BorrowerName</div>
+            <div style="color:var(--color-text-gray);">Equipment</div><div>@ctx.EquipmentName (@ctx.AssetCode)</div>
+            <div style="color:var(--color-text-gray);">Released</div><div>@ctx.ReleasedQuantity (already returned: @ctx.AlreadyReturned)</div>
+            <div style="color:var(--color-text-gray);">Due</div><div style="@(ctx.IsOverdue ? "color:var(--color-error);font-weight:700;" : "")">@ctx.DueAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm") @(ctx.IsOverdue ? $"(overdue {ctx.DaysOverdue} d)" : "")</div>
         </div>
     </div>
 }
 
-<div class="card">
-    <div class="card-body">
+<div class="cp-card">
+    <div style="padding:20px;">
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="BorrowingId" />
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div asp-validation-summary="ModelOnly" class="cp-validation-summary"></div>
 
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label asp-for="ReturnedQuantity" class="form-label fw-semibold">Returned Quantity *</label>
-                    <input asp-for="ReturnedQuantity" type="number" min="1" class="form-control" />
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                <div class="cp-form-group" style="margin:0;">
+                    <label asp-for="ReturnedQuantity" class="cp-form-label">Returned Quantity <span class="required">*</span></label>
+                    <input asp-for="ReturnedQuantity" type="number" min="1" class="cp-input" />
                 </div>
-                <div class="col-md-4">
-                    <label asp-for="ReturnedAtUtc" class="form-label fw-semibold">Return Date/Time</label>
-                    <input asp-for="ReturnedAtUtc" type="datetime-local" class="form-control" />
+                <div class="cp-form-group" style="margin:0;">
+                    <label asp-for="ReturnedAtUtc" class="cp-form-label">Return Date/Time</label>
+                    <input asp-for="ReturnedAtUtc" type="datetime-local" class="cp-input" />
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Notes" class="form-label fw-semibold">Notes</label>
-                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+            <div class="cp-form-group">
+                <label asp-for="Notes" class="cp-form-label">Notes</label>
+                <textarea asp-for="Notes" class="cp-textarea" rows="3"></textarea>
             </div>
 
-            <div class="text-end">
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
-                <button type="submit" class="btn btn-success">Record Return</button>
+            <div style="display:flex;justify-content:flex-end;gap:8px;">
+                <a asp-action="Index" class="cp-btn cp-btn-secondary">Cancel</a>
+                <button type="submit" class="cp-btn cp-btn-success"><i class="fa-solid fa-check"></i> Record Return</button>
                 @if (ctx != null)
                 {
-                    <a asp-action="Inspect" asp-route-id="@ctx.Form.BorrowingId" class="btn btn-outline-primary ms-2">Record Inspection</a>
+                    <a asp-action="Inspect" asp-route-id="@ctx.Form.BorrowingId" class="cp-btn cp-btn-primary" style="margin-left:8px;">Record Inspection</a>
                 }
             </div>
         </form>
