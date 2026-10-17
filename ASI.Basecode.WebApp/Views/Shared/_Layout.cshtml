@@ -1,49 +1,146 @@
-﻿@using static ASI.Basecode.Resources.Views.Screen
-
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] — CampusPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/main.css" />
-    <link rel="stylesheet" href="~/css/style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     @RenderSection("Styles", required: false)
 </head>
 <body>
-    @Html.Partial("_Header")
-    <div class="container">
-        <main role="main">
-            @RenderBody()
-        </main>
-    </div>
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            @Copyright
+    <div class="cp-shell">
+        <!-- Sidebar -->
+        <aside class="cp-sidebar">
+            <div class="cp-sidebar-section">
+                <div class="cp-sidebar-label">Main</div>
+                <a href="/" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <a href="/Equipment" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Equipment" ? "active" : "")">
+                    <i class="fa-solid fa-boxes-stacked"></i> Equipment
+                </a>
+                <a href="/Reservations/Available" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reservations" ? "active" : "")">
+                    <i class="fa-solid fa-calendar-check"></i> Reservations
+                </a>
+                <a href="/Users" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")">
+                    <i class="fa-solid fa-users"></i> Users
+                </a>
+            </div>
+            <div class="cp-sidebar-section">
+                <div class="cp-sidebar-label">Operations</div>
+                <a href="/Custodian/Reservations" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Custodian" ? "active" : "")">
+                    <i class="fa-solid fa-clipboard-check"></i> Custodian Console
+                </a>
+                <a href="/Custodian/Borrowings" class="cp-sidebar-item">
+                    <i class="fa-solid fa-hand-holding"></i> Active Borrowings
+                </a>
+                <a href="/Returns" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Returns" ? "active" : "")">
+                    <i class="fa-solid fa-rotate-left"></i> Returns
+                </a>
+            </div>
+            <div class="cp-sidebar-section">
+                <div class="cp-sidebar-label">Administration</div>
+                <a href="/Monitoring/Dashboard" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Monitoring" ? "active" : "")">
+                    <i class="fa-solid fa-chart-line"></i> Monitoring
+                </a>
+                <a href="/Settings" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Settings" ? "active" : "")">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </a>
+                <a href="/Notifications" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notifications" ? "active" : "")">
+                    <i class="fa-solid fa-bell"></i> Notifications
+                </a>
+                <a href="/Operator" class="cp-sidebar-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Operator" ? "active" : "")">
+                    <i class="fa-solid fa-user-gear"></i> Switch Operator
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="cp-main">
+            <!-- Top bar -->
+            <header class="cp-topbar">
+                <div class="cp-topbar-brand">
+                    <div class="cp-logo">CP</div>
+                    <div>
+                        <div class="cp-topbar-title">CampusPulse</div>
+                        <div class="cp-topbar-subtitle">Equipment &amp; Reservation Portal</div>
+                    </div>
+                </div>
+                <div class="cp-topbar-nav">
+                    <a href="/">Overview</a>
+                    <a href="/Equipment">Equipment</a>
+                    <a href="/Reservations/Available">Reserve</a>
+                    <a href="/Monitoring/Dashboard">Reports</a>
+                </div>
+                <div class="cp-topbar-actions">
+                    <a href="/Notifications" class="cp-btn cp-btn-secondary cp-btn-sm">
+                        <i class="fa-solid fa-bell"></i>
+                    </a>
+                    <div class="cp-avatar cp-avatar-sm">@(HttpContextAccessor.HttpContext?.Session?.GetString("CurrentUserName")?.Substring(0, 1) ?? "U")</div>
+                </div>
+            </header>
+
+            <!-- Page content -->
+            <main class="cp-content">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
+    </div>
+
+    <!-- Mobile bottom nav -->
+    <nav class="cp-mobile-nav">
+        <a href="/" class="cp-mobile-nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Home</span>
+        </a>
+        <a href="/Equipment" class="cp-mobile-nav-item">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Equipment</span>
+        </a>
+        <a href="/Reservations/Available" class="cp-mobile-nav-item">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Reserve</span>
+        </a>
+        <a href="/Notifications" class="cp-mobile-nav-item">
+            <i class="fa-solid fa-bell"></i>
+            <span>Alerts</span>
+        </a>
+    </nav>
+
+    <!-- Toastr replacement: simple toast container -->
+    <div id="cp-toast-container"></div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.js"></script>
     <script src="https://kit.fontawesome.com/7a7c645416.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
-        // Configure Toastr options
-        toastr.options = {
-            positionClass: "toast-top-center", // Set the notification position to center
-            timeOut: 3000,
-            closeButton: true,
-            progressBar: true
-        };
+        // Simple toast from TempData
+        (function() {
+            var success = '@Html.Raw(TempData["SuccessMessage"]?.ToString()?.Replace("'", "\\'") ?? "")';
+            var error = '@Html.Raw(TempData["ErrorMessage"]?.ToString()?.Replace("'", "\\'") ?? "")';
+            var container = document.getElementById('cp-toast-container');
+            if (success) {
+                var t = document.createElement('div');
+                t.className = 'cp-toast cp-toast-success';
+                t.textContent = success;
+                container.appendChild(t);
+                setTimeout(function() { t.remove(); }, 4000);
+            }
+            if (error) {
+                var t = document.createElement('div');
+                t.className = 'cp-toast cp-toast-error';
+                t.textContent = error;
+                container.appendChild(t);
+                setTimeout(function() { t.remove(); }, 6000);
+            }
+        })();
     </script>
-    @await Html.PartialAsync("_ToastrMessages")
-    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

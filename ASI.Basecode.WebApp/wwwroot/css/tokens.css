@@ -1,0 +1,93 @@
+/* Design tokens — extracted from Figma (Alliance - Group 5) */
+:root {
+    /* Primary greens */
+    --color-primary: #0b5d3e;
+    --color-primary-light: #168a5b;
+    --color-primary-dark: #0c6155;
+    --color-primary-tint: #eaf5ef;
+    --color-primary-tint-2: #eef3f0;
+    --color-primary-tint-3: #f4f8f5;
+
+    /* Neutrals */
+    --color-text: #17251e;
+    --color-text-muted: #2a362f;
+    --color-text-soft: #42504a;
+    --color-text-gray: #66736c;
+    --color-text-lighter: #7c8a83;
+    --color-text-faint: #8a968f;
+    --color-border: #e9efeb;
+    --color-bg: #ffffff;
+    --color-bg-light: #f4f8f5;
+
+    /* Semantic */
+    --color-info: #245c6e;
+    --color-info-tint: #eaf3f7;
+    --color-warning: #7a5310;
+    --color-warning-bg: #fdf6ea;
+    --color-error: #8e2f2f;
+    --color-error-bg: #fbeaea;
+    --color-success: #168a5b;
+    --color-success-bg: #eaf5ef;
+
+    /* Typography */
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-size-xs: 10px;
+    --font-size-sm: 11px;
+    --font-size-base: 12.5px;
+    --font-size-md: 13px;
+    --font-size-lg: 14px;
+    --font-size-xl: 16px;
+    --font-size-2xl: 22px;
+    --font-size-3xl: 24px;
+    --font-size-hero: 38px;
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-2xl: 32px;
+    --space-3xl: 48px;
+    --space-4xl: 60px;
+
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* Base reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--color-text);
+    background: var(--color-bg);
+    margin: 0;
+    padding: 0;
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--color-primary-light);
+    text-decoration: underline;
+}
+
+/* Inter font (loaded via Google Fonts in _Layout) */
