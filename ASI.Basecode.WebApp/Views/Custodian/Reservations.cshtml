@@ -1,103 +1,99 @@
 @using ASI.Basecode.Services.ViewModelClasses
-@using Microsoft.AspNetCore.Mvc.Rendering
 @model CustodianReservationsIndexViewModel
 @{
     ViewData["Title"] = "Reservation Management";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="cp-page-header">
     <div>
-        <h2 class="mb-1">Reservation Management</h2>
-        <div class="text-muted">Review, approve or reject borrower reservations.</div>
+        <h1 class="cp-page-title">Reservation Management</h1>
+        <p class="cp-page-subtitle">Review, approve or reject borrower reservations.</p>
     </div>
 </div>
 
-<div class="card mb-3">
-    <div class="card-body py-3">
-        <form method="get" asp-action="Reservations" class="row g-2 align-items-center">
-            <div class="col-md-5">
-                <input type="text" name="search" value="@Model.Search" class="form-control"
-                       placeholder="Search by borrower, equipment or reservation number..." />
-            </div>
-            <div class="col-md-3">
-                <select name="status" class="form-select" asp-items="@(ViewBag.StatusOptions as SelectList)"></select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-sm btn-outline-secondary">Apply</button>
-                <a asp-action="Reservations" class="btn btn-sm btn-outline-secondary">Clear</a>
-            </div>
-        </form>
-    </div>
+<div class="cp-filter-bar">
+    <form method="get" asp-action="Reservations" style="display:contents;">
+        <input type="text" name="search" value="@Model.Search" class="cp-input" placeholder="Search by borrower, equipment or reservation number..." />
+        <select name="status" class="cp-select" asp-items="@(ViewBag.StatusOptions as SelectList)"></select>
+        <button type="submit" class="cp-btn cp-btn-secondary cp-btn-sm"><i class="fa-solid fa-filter"></i> Apply</button>
+        <a asp-action="Reservations" class="cp-btn cp-btn-secondary cp-btn-sm">Clear</a>
+    </form>
 </div>
 
-<div class="card">
-    <table class="table table-hover mb-0">
-        <thead class="table-light">
-            <tr>
-                <th>Reservation #</th>
-                <th>Borrower</th>
-                <th>Equipment</th>
-                <th class="text-center">Qty</th>
-                <th>Pickup Point</th>
-                <th>Status</th>
-                <th>Submitted</th>
-                <th>Start / Due</th>
-                <th class="text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Page.Items.Any())
-            {
-                <tr><td colspan="9" class="text-center text-muted py-4">No reservations found.</td></tr>
-            }
-            @foreach (var r in Model.Page.Items)
-            {
-                <tr>
-                    <td><strong>@r.ReservationNumber</strong></td>
-                    <td>@r.BorrowerName</td>
-                    <td>
-                        @r.EquipmentName
-                        <div class="text-muted small">@r.AssetCode</div>
-                    </td>
-                    <td class="text-center">@r.RequestedQuantity</td>
-                    <td>@(r.PickupLocationName ?? "—")</td>
-                    <td>
-                        <span class="badge @(r.StatusCode == "PENDING" ? "bg-warning text-dark" : r.StatusCode == "APPROVED" ? "bg-info text-dark" : r.StatusCode == "COMPLETED" ? "bg-success" : "bg-secondary")">
-                            @r.StatusDescription
-                        </span>
-                    </td>
-                    <td class="small">@r.SubmittedAtUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
-                    <td class="small">@r.RequestedStartAtUtc.ToLocalTime().ToString("dd MMM") – @r.ExpectedReturnAtUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
-                    <td class="text-center text-nowrap">
-                        <a asp-action="Review" asp-route-id="@r.ReservationId" class="btn btn-sm btn-outline-primary">Review</a>
-                        @if (r.StatusCode == "APPROVED")
-                        {
-                            <a asp-action="Release" asp-route-id="@r.ReservationId" class="btn btn-sm btn-outline-success">Release</a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-@if (Model.Page.TotalPages > 1)
+@if (!Model.Page.Items.Any())
 {
-    <nav class="mt-3 d-flex justify-content-between align-items-center">
-        <span class="text-muted small">Page @Model.Page.Page of @Model.Page.TotalPages (@Model.Page.TotalCount records)</span>
-        <ul class="pagination mb-0">
-            <li class="page-item @(Model.Page.HasPrevious ? "" : "disabled")">
-                <a class="page-link" asp-action="Reservations" asp-route-search="@Model.Search" asp-route-status="@Model.StatusId" asp-route-page="@(Model.Page.Page - 1)">‹</a>
+    <div class="cp-empty-state">
+        <div class="cp-empty-state-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+        <div class="cp-empty-state-text">No reservations found.</div>
+    </div>
+}
+else
+{
+    <div class="cp-table-wrap">
+        <table class="cp-table">
+            <thead>
+                <tr>
+                    <th>Reservation #</th>
+                    <th>Borrower</th>
+                    <th>Equipment</th>
+                    <th class="text-center">Qty</th>
+                    <th>Pickup Point</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th>Start / Due</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Page.Items)
+                {
+                    <tr>
+                        <td><strong>@r.ReservationNumber</strong></td>
+                        <td>@r.BorrowerName</td>
+                        <td>
+                            @r.EquipmentName
+                            <div style="font-size:10.8px;color:var(--color-text-lighter);">@r.AssetCode</div>
+                        </td>
+                        <td class="text-center">@r.RequestedQuantity</td>
+                        <td>@(r.PickupLocationName ?? "—")</td>
+                        <td>
+                            <span class="cp-badge @(r.StatusCode == "PENDING" ? "cp-badge-warning" : r.StatusCode == "APPROVED" ? "cp-badge-info" : r.StatusCode == "COMPLETED" ? "cp-badge-success" : "cp-badge-neutral")">
+                                @r.StatusDescription
+                            </span>
+                        </td>
+                        <td style="font-size:11.6px;">@r.SubmittedAtUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
+                        <td style="font-size:11.6px;">@r.RequestedStartAtUtc.ToLocalTime().ToString("dd MMM") – @r.ExpectedReturnAtUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
+                        <td class="text-center">
+                            <a asp-action="Review" asp-route-id="@r.ReservationId" class="cp-btn cp-btn-secondary cp-btn-sm">Review</a>
+                            @if (r.StatusCode == "APPROVED")
+                            {
+                                <a asp-action="Release" asp-route-id="@r.ReservationId" class="cp-btn cp-btn-success cp-btn-sm" style="margin-left:4px;">Release</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.Page != null && Model.Page.TotalPages > 1)
+{
+    <div class="cp-pagination">
+        <span class="cp-pagination-info">Page @Model.Page.Page of @Model.Page.TotalPages (@Model.Page.TotalCount records)</span>
+        <ul class="cp-pagination-list">
+            <li class="@(Model.Page.HasPrevious ? "" : "disabled")">
+                <a asp-action="Reservations" asp-route-search="@Model.Search" asp-route-status="@Model.StatusId" asp-route-page="@(Model.Page.Page - 1)">‹</a>
             </li>
             @for (var p = 1; p <= Model.Page.TotalPages; p++)
             {
-                <li class="page-item @(p == Model.Page.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Reservations" asp-route-search="@Model.Search" asp-route-status="@Model.StatusId" asp-route-page="@p">@p</a>
+                <li class="@(p == Model.Page.Page ? "active" : "")">
+                    <a asp-action="Reservations" asp-route-search="@Model.Search" asp-route-status="@Model.StatusId" asp-route-page="@p">@p</a>
                 </li>
             }
-            <li class="page-item @(Model.Page.HasNext ? "" : "disabled")">
-                <a class="page-link" asp-action="Reservations" asp-route-search="@Model.Search" asp-route-status="@Model.StatusId" asp-route-page="@(Model.Page.Page + 1)">›</a>
+            <li class="@(Model.Page.HasNext ? "" : "disabled")">
+                <a asp-action="Reservations" asp-route-search="@Model.Search" asp-route-status="@Model.StatusId" asp-route-page="@(Model.Page.Page + 1)">›</a>
             </li>
         </ul>
-    </nav>
+    </div>
 }

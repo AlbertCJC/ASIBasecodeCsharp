@@ -4,88 +4,84 @@
     ViewData["Title"] = "Reservation Review";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Reservation Review — @Model.ReservationNumber</h2>
-    <a asp-action="Reservations" class="btn btn-sm btn-outline-secondary">Back to list</a>
+<div class="cp-page-header">
+    <div>
+        <h1 class="cp-page-title">Reservation Review</h1>
+        <p class="cp-page-subtitle">@Model.ReservationNumber</p>
+    </div>
+    <div class="cp-page-actions">
+        <a asp-action="Reservations" class="cp-btn cp-btn-secondary cp-btn-sm">Back to list</a>
+    </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header">Borrower</div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4">Name</dt><dd class="col-sm-8">@Model.BorrowerName</dd>
-                    <dt class="col-sm-4">Role</dt><dd class="col-sm-8">@Model.BorrowerRole</dd>
-                    <dt class="col-sm-4">Department</dt><dd class="col-sm-8">@(Model.BorrowerDepartment ?? "—")</dd>
-                    <dt class="col-sm-4">Email</dt><dd class="col-sm-8">@Model.BorrowerEmail</dd>
-                </dl>
-            </div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <!-- Borrower -->
+    <div class="cp-card">
+        <div class="cp-card-header">Borrower</div>
+        <div style="font-size:12.5px;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;">
+            <div style="color:var(--color-text-gray);">Name</div><div>@Model.BorrowerName</div>
+            <div style="color:var(--color-text-gray);">Role</div><div>@Model.BorrowerRole</div>
+            <div style="color:var(--color-text-gray);">Department</div><div>@(Model.BorrowerDepartment ?? "—")</div>
+            <div style="color:var(--color-text-gray);">Email</div><div>@Model.BorrowerEmail</div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header">Equipment</div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4">Name</dt><dd class="col-sm-8">@Model.EquipmentName</dd>
-                    <dt class="col-sm-4">Asset Code</dt><dd class="col-sm-8">@Model.AssetCode</dd>
-                    <dt class="col-sm-4">Category</dt><dd class="col-sm-8">@Model.CategoryName</dd>
-                    <dt class="col-sm-4">Location</dt><dd class="col-sm-8">@(Model.LocationName ?? "—")</dd>
-                    <dt class="col-sm-4">Pickup Point</dt><dd class="col-sm-8">@(Model.PickupLocationName ?? "—")</dd>
-                </dl>
-            </div>
+    <!-- Equipment -->
+    <div class="cp-card">
+        <div class="cp-card-header">Equipment</div>
+        <div style="font-size:12.5px;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;">
+            <div style="color:var(--color-text-gray);">Name</div><div>@Model.EquipmentName</div>
+            <div style="color:var(--color-text-gray);">Asset Code</div><div>@Model.AssetCode</div>
+            <div style="color:var(--color-text-gray);">Category</div><div>@Model.CategoryName</div>
+            <div style="color:var(--color-text-gray);">Location</div><div>@(Model.LocationName ?? "—")</div>
+            <div style="color:var(--color-text-gray);">Pickup Point</div><div>@(Model.PickupLocationName ?? "—")</div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header">Reservation Details</div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4">Status</dt>
-                    <dd class="col-sm-8">
-                        <span class="badge @(Model.StatusCode == "PENDING" ? "bg-warning text-dark" : Model.StatusCode == "APPROVED" ? "bg-info text-dark" : Model.StatusCode == "COMPLETED" ? "bg-success" : "bg-secondary")">
-                            @Model.StatusDescription
-                        </span>
-                    </dd>
-                    <dt class="col-sm-4">Submitted</dt><dd class="col-sm-8">@Model.SubmittedAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
-                    <dt class="col-sm-4">Quantity</dt><dd class="col-sm-8">@Model.RequestedQuantity (approved: @Model.ApprovedQuantity, held: @Model.HeldQuantity)</dd>
-                    <dt class="col-sm-4">Start</dt><dd class="col-sm-8">@Model.RequestedStartAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
-                    <dt class="col-sm-4">Expected Return</dt><dd class="col-sm-8">@Model.ExpectedReturnAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
-                    <dt class="col-sm-4">Purpose</dt><dd class="col-sm-8">@(Model.Purpose ?? "—")</dd>
-                    <dt class="col-sm-4">Notes</dt><dd class="col-sm-8">@(Model.AdditionalNotes ?? "—")</dd>
-                </dl>
-            </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <!-- Reservation Details -->
+    <div class="cp-card">
+        <div class="cp-card-header">Reservation Details</div>
+        <div style="font-size:12.5px;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;">
+            <div style="color:var(--color-text-gray);">Status</div>
+            <div><span class="cp-badge @(Model.StatusCode == "PENDING" ? "cp-badge-warning" : Model.StatusCode == "APPROVED" ? "cp-badge-info" : Model.StatusCode == "COMPLETED" ? "cp-badge-success" : "cp-badge-neutral")">@Model.StatusDescription</span></div>
+            <div style="color:var(--color-text-gray);">Submitted</div><div>@Model.SubmittedAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</div>
+            <div style="color:var(--color-text-gray);">Quantity</div><div>@Model.RequestedQuantity (approved: @Model.ApprovedQuantity, held: @Model.HeldQuantity)</div>
+            <div style="color:var(--color-text-gray);">Start</div><div>@Model.RequestedStartAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</div>
+            <div style="color:var(--color-text-gray);">Expected Return</div><div>@Model.ExpectedReturnAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</div>
+            <div style="color:var(--color-text-gray);">Purpose</div><div>@(Model.Purpose ?? "—")</div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card h-100">
-            <div class="card-header">Decision</div>
-            <div class="card-body">
-                @if (Model.CanApprove || Model.CanReject)
-                {
-                    <form asp-action="Approve" asp-route-id="@Model.ReservationId" method="post" class="mb-3">
-                        @Html.AntiForgeryToken()
-                        <label class="form-label">Approval notes (optional)</label>
-                        <textarea name="notes" class="form-control mb-2" rows="2"></textarea>
-                        <button type="submit" class="btn btn-success">Approve Reservation</button>
-                    </form>
-                    <form asp-action="Reject" asp-route-id="@Model.ReservationId" method="post">
-                        @Html.AntiForgeryToken()
-                        <label class="form-label">Rejection reason (required)</label>
-                        <textarea name="reason" class="form-control mb-2" rows="2" required></textarea>
-                        <button type="submit" class="btn btn-danger">Reject Reservation</button>
-                    </form>
-                }
-                else
-                {
-                    <div class="text-muted">This reservation is no longer pending. Current status: @Model.StatusDescription.</div>
-                    @if (Model.StatusCode == "APPROVED")
-                    {
-                        <a asp-action="Release" asp-route-id="@Model.ReservationId" class="btn btn-success mt-2">Release Equipment</a>
-                    }
-                }
-            </div>
-        </div>
+
+    <!-- Decision -->
+    <div class="cp-card">
+        <div class="cp-card-header">Decision</div>
+        @if (Model.CanApprove || Model.CanReject)
+        {
+            <form asp-action="Approve" asp-route-id="@Model.ReservationId" method="post" style="margin-bottom:16px;">
+                @Html.AntiForgeryToken()
+                <div class="cp-form-group">
+                    <label class="cp-form-label">Approval notes (optional)</label>
+                    <textarea name="notes" class="cp-textarea" rows="2"></textarea>
+                </div>
+                <button type="submit" class="cp-btn cp-btn-success"><i class="fa-solid fa-check"></i> Approve Reservation</button>
+            </form>
+            <form asp-action="Reject" asp-route-id="@Model.ReservationId" method="post">
+                @Html.AntiForgeryToken()
+                <div class="cp-form-group">
+                    <label class="cp-form-label">Rejection reason (required)</label>
+                    <textarea name="reason" class="cp-textarea" rows="2" required></textarea>
+                </div>
+                <button type="submit" class="cp-btn cp-btn-danger"><i class="fa-solid fa-xmark"></i> Reject Reservation</button>
+            </form>
+        }
+        else
+        {
+            <p style="color:var(--color-text-gray);font-size:12.5px;">This reservation is no longer pending. Current status: @Model.StatusDescription.</p>
+            @if (Model.StatusCode == "APPROVED")
+            {
+                <a asp-action="Release" asp-route-id="@Model.ReservationId" class="cp-btn cp-btn-success" style="margin-top:8px;">Release Equipment</a>
+            }
+        }
     </div>
 </div>
