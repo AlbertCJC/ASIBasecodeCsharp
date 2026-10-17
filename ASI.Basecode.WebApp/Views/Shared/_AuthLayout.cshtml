@@ -1,0 +1,48 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — CampusPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="cp-auth-page">
+        <!-- Top bar -->
+        <nav class="cp-auth-nav">
+            <a href="/" class="cp-auth-brand">
+                <div class="cp-logo">CP</div>
+                <div>
+                    <div class="cp-topbar-title">CampusPulse</div>
+                    <div class="cp-topbar-subtitle">Equipment &amp; Reservation Portal</div>
+                </div>
+            </a>
+            <div class="cp-auth-nav-links">
+                <a href="/">Home</a>
+                <a href="/Reservations/Available">Equipment</a>
+                <a href="#support">Support</a>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <main class="cp-auth-main">
+            @RenderBody()
+        </main>
+
+        <!-- Footer -->
+        <footer class="cp-auth-footer">
+            CampusPulse · Property Office · A.Y. 2026–2027
+        </footer>
+    </div>
+    <script src="https://kit.fontawesome.com/7a7c645416.js" crossorigin="anonymous"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
