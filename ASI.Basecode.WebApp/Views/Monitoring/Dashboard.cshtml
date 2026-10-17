@@ -4,68 +4,76 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h2 class="mb-3">CampusPulse Dashboard</h2>
+<h1 class="cp-page-title" style="margin-bottom:4px;">CampusPulse Dashboard</h1>
+<p class="cp-page-subtitle" style="margin-bottom:24px;">System overview and recent activity.</p>
 
-<div class="row g-3 mb-4">
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Equipment Records</div>
-            <div class="fs-3 fw-bold">@Model.EquipmentRecords</div>
-        </div></div>
+<!-- Equipment KPIs -->
+<div class="cp-kpi-grid">
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Equipment Records</div>
+        <div class="cp-kpi-value">@Model.EquipmentRecords</div>
     </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Total Units</div>
-            <div class="fs-3 fw-bold">@Model.TotalUnits</div>
-        </div></div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Total Units</div>
+        <div class="cp-kpi-value">@Model.TotalUnits</div>
     </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Available Units</div>
-            <div class="fs-3 fw-bold">@Model.AvailableUnits</div>
-        </div></div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Available Units</div>
+        <div class="cp-kpi-value">@Model.AvailableUnits</div>
     </div>
 </div>
 
-<h5 class="mb-2">Reservations</h5>
-<div class="row g-3 mb-4">
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Total</div><div class="fs-4 fw-bold">@Model.ReservationTotal</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Pending</div><div class="fs-4 fw-bold text-warning">@Model.ReservationPending</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Approved</div><div class="fs-4 fw-bold text-info">@Model.ReservationApproved</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Completed</div><div class="fs-4 fw-bold text-success">@Model.ReservationCompleted</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Rejected</div><div class="fs-4 fw-bold text-danger">@Model.ReservationRejected</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Cancelled</div><div class="fs-4 fw-bold text-secondary">@Model.ReservationCancelled</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Expired</div><div class="fs-4 fw-bold text-secondary">@Model.ReservationExpired</div></div></div></div>
+<!-- Reservations KPIs -->
+<h3 style="font-size:14px;font-weight:700;color:var(--color-text-soft);margin:0 0 8px;">Reservations</h3>
+<div class="cp-kpi-grid" style="grid-template-columns:repeat(7,1fr);">
+    <div class="cp-kpi"><div class="cp-kpi-label">Total</div><div class="cp-kpi-value">@Model.ReservationTotal</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Pending</div><div class="cp-kpi-value" style="color:var(--color-warning);">@Model.ReservationPending</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Approved</div><div class="cp-kpi-value" style="color:var(--color-info);">@Model.ReservationApproved</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Completed</div><div class="cp-kpi-value" style="color:var(--color-success);">@Model.ReservationCompleted</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Rejected</div><div class="cp-kpi-value" style="color:var(--color-error);">@Model.ReservationRejected</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Cancelled</div><div class="cp-kpi-value">@Model.ReservationCancelled</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Expired</div><div class="cp-kpi-value">@Model.ReservationExpired</div></div>
 </div>
 
-<h5 class="mb-2">Borrowings</h5>
-<div class="row g-3 mb-4">
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Total</div><div class="fs-4 fw-bold">@Model.BorrowingTotal</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Active</div><div class="fs-4 fw-bold text-primary">@Model.BorrowingActive</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Partial</div><div class="fs-4 fw-bold text-warning">@Model.BorrowingPartial</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Returned</div><div class="fs-4 fw-bold text-success">@Model.BorrowingReturned</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Overdue</div><div class="fs-4 fw-bold text-danger">@Model.BorrowingOverdue</div></div></div></div>
-    <div class="col"><div class="card"><div class="card-body text-center"><div class="text-muted small">Lost</div><div class="fs-4 fw-bold text-dark">@Model.BorrowingLost</div></div></div></div>
+<!-- Borrowings KPIs -->
+<h3 style="font-size:14px;font-weight:700;color:var(--color-text-soft);margin:16px 0 8px;">Borrowings</h3>
+<div class="cp-kpi-grid" style="grid-template-columns:repeat(6,1fr);">
+    <div class="cp-kpi"><div class="cp-kpi-label">Total</div><div class="cp-kpi-value">@Model.BorrowingTotal</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Active</div><div class="cp-kpi-value" style="color:var(--color-info);">@Model.BorrowingActive</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Partial</div><div class="cp-kpi-value" style="color:var(--color-warning);">@Model.BorrowingPartial</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Returned</div><div class="cp-kpi-value" style="color:var(--color-success);">@Model.BorrowingReturned</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Overdue</div><div class="cp-kpi-value" style="color:var(--color-error);">@Model.BorrowingOverdue</div></div>
+    <div class="cp-kpi"><div class="cp-kpi-label">Lost</div><div class="cp-kpi-value">@Model.BorrowingLost</div></div>
 </div>
 
-<h5 class="mb-2">Recent Activity</h5>
-<div class="card">
-    <table class="table table-sm mb-0">
-        <thead class="table-light"><tr><th>When</th><th>Actor</th><th>Action</th><th>Entity</th><th>Reference</th><th>Details</th></tr></thead>
+<!-- Recent activity -->
+<h3 style="font-size:14px;font-weight:700;color:var(--color-text-soft);margin:24px 0 8px;">Recent Activity</h3>
+<div class="cp-table-wrap">
+    <table class="cp-table">
+        <thead>
+            <tr>
+                <th>When</th>
+                <th>Actor</th>
+                <th>Action</th>
+                <th>Entity</th>
+                <th>Reference</th>
+                <th>Details</th>
+            </tr>
+        </thead>
         <tbody>
             @if (!Model.RecentAudit.Any())
             {
-                <tr><td colspan="6" class="text-center text-muted py-3">No activity yet.</td></tr>
+                <tr><td colspan="6" class="cp-empty-state" style="padding:24px;">No activity yet.</td></tr>
             }
             @foreach (var a in Model.RecentAudit)
             {
                 <tr>
-                    <td class="small">@a.OccurredAtUtc.ToLocalTime().ToString("dd MMM HH:mm")</td>
-                    <td class="small">@a.ActorName</td>
-                    <td class="small">@a.ActionType</td>
-                    <td class="small">@a.EntityType</td>
-                    <td class="small">@(a.ReferenceNumber ?? "—")</td>
-                    <td class="small">@(a.Details ?? "—")</td>
+                    <td style="font-size:11.6px;white-space:nowrap;">@a.OccurredAtUtc.ToLocalTime().ToString("dd MMM HH:mm")</td>
+                    <td style="font-size:11.6px;">@a.ActorName</td>
+                    <td style="font-size:11.6px;">@a.ActionType</td>
+                    <td style="font-size:11.6px;">@a.EntityType</td>
+                    <td style="font-size:11.6px;">@(a.ReferenceNumber ?? "—")</td>
+                    <td style="font-size:11.6px;">@(a.Details ?? "—")</td>
                 </tr>
             }
         </tbody>

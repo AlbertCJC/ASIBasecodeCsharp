@@ -4,53 +4,63 @@
     ViewData["Title"] = "Notifications";
 }
 
-<h2 class="mb-3">Notifications (@Model.UnreadCount unread)</h2>
-
-<div class="text-end mb-3">
-    <form asp-action="MarkAllRead" method="post" class="d-inline">
-        @Html.AntiForgeryToken()
-        <button type="submit" class="btn btn-sm btn-outline-secondary">Mark all as read</button>
-    </form>
+<div class="cp-page-header">
+    <div>
+        <h1 class="cp-page-title">Notifications (@Model.UnreadCount unread)</h1>
+        <p class="cp-page-subtitle">Stay updated on your reservations and borrowings.</p>
+    </div>
+    <div class="cp-page-actions">
+        <form asp-action="MarkAllRead" method="post" style="display:inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="cp-btn cp-btn-secondary cp-btn-sm">Mark all as read</button>
+        </form>
+    </div>
 </div>
 
-<div class="card">
-    <table class="table table-hover mb-0">
-        <thead class="table-light">
-            <tr>
-                <th>When</th>
-                <th>Type</th>
-                <th>Title</th>
-                <th>Message</th>
-                <th class="text-center">Read</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Notifications.Any())
-            {
-                <tr><td colspan="5" class="text-center text-muted py-4">No notifications.</td></tr>
-            }
-            @foreach (var n in Model.Notifications)
-            {
-                <tr class="@(n.IsRead ? "" : "table-warning")">
-                    <td class="small">@n.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
-                    <td class="small">@n.NotificationType</td>
-                    <td><strong>@n.Title</strong></td>
-                    <td class="small">@n.Message</td>
-                    <td class="text-center">
-                        @if (!n.IsRead)
-                        {
-                            <form asp-action="MarkRead" asp-route-id="@n.NotificationId" method="post" class="d-inline">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-outline-primary">Mark read</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <span class="text-muted small">Read</span>
-                        }
-                    </td>
+@if (!Model.Notifications.Any())
+{
+    <div class="cp-empty-state">
+        <div class="cp-empty-state-icon"><i class="fa-solid fa-bell-slash"></i></div>
+        <div class="cp-empty-state-text">No notifications.</div>
+    </div>
+}
+else
+{
+    <div class="cp-table-wrap">
+        <table class="cp-table">
+            <thead>
+                <tr>
+                    <th>When</th>
+                    <th>Type</th>
+                    <th>Title</th>
+                    <th>Message</th>
+                    <th class="text-center">Status</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var n in Model.Notifications)
+                {
+                    <tr style="@(n.IsRead ? "" : "background:var(--color-warning-bg);")">
+                        <td style="font-size:11.6px;white-space:nowrap;">@n.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                        <td style="font-size:11.6px;">@n.NotificationType</td>
+                        <td style="font-weight:600;">@n.Title</td>
+                        <td style="font-size:12px;">@n.Message</td>
+                        <td class="text-center">
+                            @if (!n.IsRead)
+                            {
+                                <form asp-action="MarkRead" asp-route-id="@n.NotificationId" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="cp-btn cp-btn-primary cp-btn-sm">Mark read</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="cp-badge cp-badge-success">Read</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

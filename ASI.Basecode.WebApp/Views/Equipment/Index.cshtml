@@ -5,174 +5,135 @@
     ViewData["Title"] = "Equipment Administration";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="cp-page-header">
     <div>
-        <h2 class="mb-1">Equipment Administration</h2>
-        <div class="text-muted">System-wide equipment records, categories, locations and maintenance information.</div>
+        <h1 class="cp-page-title">Equipment Administration</h1>
+        <p class="cp-page-subtitle">System-wide equipment records, categories, locations and maintenance information.</p>
     </div>
-    <a asp-action="Create" class="btn btn-success">+ Add Equipment</a>
-</div>
-
-<div class="row g-3 mb-4">
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Equipment Records</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.RecordCount</div>
-        </div></div>
-    </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Total Units</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.TotalUnits</div>
-        </div></div>
-    </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Available</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.AvailableUnits</div>
-        </div></div>
-    </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Reserved</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.ReservedUnits</div>
-        </div></div>
-    </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Currently Released</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.ReleasedUnits</div>
-        </div></div>
+    <div class="cp-page-actions">
+        <a asp-action="Create" class="cp-btn cp-btn-success"><i class="fa-solid fa-plus"></i> Add Equipment</a>
     </div>
 </div>
 
-<div class="card mb-3">
-    <div class="card-body py-3">
-        <form method="get" asp-action="Index" class="row g-2 align-items-center">
-            <div class="col-md-4">
-                <input type="text" name="search" value="@Model.Search" class="form-control"
-                       placeholder="Search by asset code, name or category..." />
-            </div>
-            <div class="col-md-2">
-                <select name="category" class="form-select" asp-items="@(ViewBag.CategoryOptions as SelectList)"></select>
-            </div>
-            <div class="col-md-2">
-                <select name="location" class="form-select" asp-items="@(ViewBag.LocationOptions as SelectList)"></select>
-            </div>
-            <div class="col-md-2">
-                <select name="condition" class="form-select" asp-items="@(ViewBag.ConditionOptions as SelectList)"></select>
-            </div>
-            <div class="col-md-2">
-                <select name="operationalStatus" class="form-select" asp-items="@(ViewBag.OperationalStatusOptions as SelectList)"></select>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-sm btn-outline-secondary me-1">
-                    <i class="fa-solid fa-filter"></i> Apply Filters
-                </button>
-                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Clear</a>
-            </div>
-        </form>
+<!-- KPI cards -->
+<div class="cp-kpi-grid">
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Equipment Records</div>
+        <div class="cp-kpi-value">@(Model.Totals?.RecordCount ?? 0)</div>
+    </div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Total Units</div>
+        <div class="cp-kpi-value">@(Model.Totals?.TotalUnits ?? 0)</div>
+    </div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Available</div>
+        <div class="cp-kpi-value">@(Model.Totals?.AvailableUnits ?? 0)</div>
+    </div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Reserved</div>
+        <div class="cp-kpi-value">@(Model.Totals?.ReservedUnits ?? 0)</div>
+    </div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Released</div>
+        <div class="cp-kpi-value">@(Model.Totals?.ReleasedUnits ?? 0)</div>
     </div>
 </div>
 
-<div class="card">
-    <table class="table table-hover mb-0">
-        <thead class="table-light">
-            <tr>
-                <th>Equipment</th>
-                <th>Asset Code</th>
-                <th>Category</th>
-                <th>Location</th>
-                <th class="text-center">Qty</th>
-                <th class="text-center">Avail.</th>
-                <th>Condition</th>
-                <th>Status</th>
-                <th class="text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Page.Items.Any())
-            {
-                <tr>
-                    <td colspan="9" class="text-center text-muted py-4">No equipment records found.</td>
-                </tr>
-            }
-            @foreach (var equipment in Model.Page.Items)
-            {
-                <tr>
-                    <td>
-                        <strong>@equipment.EquipmentName</strong>
-                        <div class="text-muted small">
-                            @(string.IsNullOrWhiteSpace(equipment.Description)
-                                ? string.Empty
-                                : equipment.Description.Length > 60
-                                    ? equipment.Description.Substring(0, 60) + "…"
-                                    : equipment.Description)
-                        </div>
-                    </td>
-                    <td class="text-nowrap">@equipment.AssetCode</td>
-                    <td>@equipment.CategoryName</td>
-                    <td>@(equipment.LocationName ?? "—")</td>
-                    <td class="text-center">@equipment.TotalQuantity</td>
-                    <td class="text-center @(equipment.AvailableUnits <= 0 ? "text-danger fw-bold" : "")">@equipment.AvailableUnits</td>
-                    <td>@(equipment.ConditionName ?? "—")</td>
-                    <td>
-                        <span class="badge @(equipment.IsActive ? "bg-success-subtle text-success" : "bg-secondary-subtle text-secondary")">
-                            @(equipment.IsActive ? "Active" : "Inactive")
-                        </span>
-                    </td>
-                    <td class="text-center text-nowrap">
-                        <a asp-action="Details" asp-route-id="@equipment.EquipmentId" class="btn btn-sm btn-outline-primary">View</a>
-                        <a asp-action="Edit" asp-route-id="@equipment.EquipmentId" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <form method="post" asp-action="Delete" asp-route-id="@equipment.EquipmentId" class="d-inline"
-                              onsubmit="return confirm('Delete this equipment record? Deletion is blocked while borrowings, reservations or inspections reference it.');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<!-- Filter bar -->
+<div class="cp-filter-bar">
+    <form method="get" asp-action="Index" style="display:contents;">
+        <input type="text" name="search" value="@Model.Search" class="cp-input" placeholder="Search by asset code, name or category..." />
+        <select name="category" class="cp-select" asp-items="@(ViewBag.CategoryOptions as SelectList)"></select>
+        <select name="location" class="cp-select" asp-items="@(ViewBag.LocationOptions as SelectList)"></select>
+        <select name="condition" class="cp-select" asp-items="@(ViewBag.ConditionOptions as SelectList)"></select>
+        <select name="operationalStatus" class="cp-select" asp-items="@(ViewBag.OperationalStatusOptions as SelectList)"></select>
+        <button type="submit" class="cp-btn cp-btn-secondary cp-btn-sm"><i class="fa-solid fa-filter"></i> Apply</button>
+        <a asp-action="Index" class="cp-btn cp-btn-secondary cp-btn-sm">Clear</a>
+    </form>
 </div>
 
-@if (Model.Page.TotalPages > 1)
+<!-- Table -->
+@if (!Model.Page.Items.Any())
 {
-    <nav class="mt-3 d-flex justify-content-between align-items-center">
-        <span class="text-muted small">
-            Showing page @Model.Page.Page of @Model.Page.TotalPages (@Model.Page.TotalCount records)
-        </span>
-        <ul class="pagination mb-0">
-            <li class="page-item @(Model.Page.HasPrevious ? "" : "disabled")">
-                <a class="page-link" asp-action="Index"
-                   asp-route-search="@Model.Search"
-                   asp-route-category="@Model.CategoryId"
-                   asp-route-location="@Model.LocationId"
-                   asp-route-condition="@Model.ConditionId"
-                   asp-route-operationalStatus="@Model.OperationalStatusId"
-                   asp-route-page="@(Model.Page.Page - 1)">‹</a>
+    <div class="cp-empty-state">
+        <div class="cp-empty-state-icon"><i class="fa-solid fa-box-open"></i></div>
+        <div class="cp-empty-state-text">No equipment records found.</div>
+    </div>
+}
+else
+{
+    <div class="cp-table-wrap">
+        <table class="cp-table">
+            <thead>
+                <tr>
+                    <th>Equipment</th>
+                    <th>Asset Code</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Avail.</th>
+                    <th>Condition</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var eq in Model.Page.Items)
+                {
+                    <tr>
+                        <td>
+                            <div style="font-weight:600;">@eq.EquipmentName</div>
+                            @if (!string.IsNullOrWhiteSpace(eq.Description))
+                            {
+                                <div style="font-size:10.8px;color:var(--color-text-lighter);">
+                                    @(eq.Description.Length > 60 ? eq.Description.Substring(0, 60) + "…" : eq.Description)
+                                </div>
+                            }
+                        </td>
+                        <td style="font-family:monospace;font-size:11.6px;">@eq.AssetCode</td>
+                        <td>@eq.CategoryName</td>
+                        <td>@(eq.LocationName ?? "—")</td>
+                        <td class="text-center">@eq.TotalQuantity</td>
+                        <td class="text-center" style="@(eq.AvailableUnits <= 0 ? "color:var(--color-error);font-weight:700;" : "")">@eq.AvailableUnits</td>
+                        <td>@(eq.ConditionName ?? "—")</td>
+                        <td>
+                            <span class="cp-badge @(eq.IsActive ? "cp-badge-success" : "cp-badge-neutral")">
+                                @(eq.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@eq.EquipmentId" class="cp-btn cp-btn-secondary cp-btn-sm">View</a>
+                            <a asp-action="Edit" asp-route-id="@eq.EquipmentId" class="cp-btn cp-btn-secondary cp-btn-sm" style="margin-left:4px;">Edit</a>
+                            <form method="post" asp-action="Delete" asp-route-id="@eq.EquipmentId" style="display:inline;margin-left:4px;"
+                                  onsubmit="return confirm('Delete this equipment record?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="cp-btn cp-btn-danger cp-btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.Page != null && Model.Page.TotalPages > 1)
+{
+    <div class="cp-pagination">
+        <span class="cp-pagination-info">Page @Model.Page.Page of @Model.Page.TotalPages (@Model.Page.TotalCount records)</span>
+        <ul class="cp-pagination-list">
+            <li class="@(Model.Page.HasPrevious ? "" : "disabled")">
+                <a asp-action="Index" asp-route-search="@Model.Search" asp-route-category="@Model.CategoryId" asp-route-location="@Model.LocationId" asp-route-condition="@Model.ConditionId" asp-route-operationalStatus="@Model.OperationalStatusId" asp-route-page="@(Model.Page.Page - 1)">‹</a>
             </li>
             @for (var p = 1; p <= Model.Page.TotalPages; p++)
             {
-                <li class="page-item @(p == Model.Page.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Index"
-                       asp-route-search="@Model.Search"
-                       asp-route-category="@Model.CategoryId"
-                       asp-route-location="@Model.LocationId"
-                       asp-route-condition="@Model.ConditionId"
-                       asp-route-operationalStatus="@Model.OperationalStatusId"
-                       asp-route-page="@p">@p</a>
+                <li class="@(p == Model.Page.Page ? "active" : "")">
+                    <a asp-action="Index" asp-route-search="@Model.Search" asp-route-category="@Model.CategoryId" asp-route-location="@Model.LocationId" asp-route-condition="@Model.ConditionId" asp-route-operationalStatus="@Model.OperationalStatusId" asp-route-page="@p">@p</a>
                 </li>
             }
-            <li class="page-item @(Model.Page.HasNext ? "" : "disabled")">
-                <a class="page-link" asp-action="Index"
-                   asp-route-search="@Model.Search"
-                   asp-route-category="@Model.CategoryId"
-                   asp-route-location="@Model.LocationId"
-                   asp-route-condition="@Model.ConditionId"
-                   asp-route-operationalStatus="@Model.OperationalStatusId"
-                   asp-route-page="@(Model.Page.Page + 1)">›</a>
+            <li class="@(Model.Page.HasNext ? "" : "disabled")">
+                <a asp-action="Index" asp-route-search="@Model.Search" asp-route-category="@Model.CategoryId" asp-route-location="@Model.LocationId" asp-route-condition="@Model.ConditionId" asp-route-operationalStatus="@Model.OperationalStatusId" asp-route-page="@(Model.Page.Page + 1)">›</a>
             </li>
         </ul>
-    </nav>
+    </div>
 }

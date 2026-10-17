@@ -4,83 +4,86 @@
     ViewData["Title"] = "Transaction Monitoring";
 }
 
-<h2 class="mb-3">Transaction Monitoring</h2>
-
-<div class="card mb-3">
-    <div class="card-body py-3">
-        <form method="get" asp-action="Transactions" class="row g-2 align-items-center">
-            <div class="col-md-4">
-                <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Search by reference, actor, equipment..." />
-            </div>
-            <div class="col-md-3">
-                <select name="tab" class="form-select">
-                    <option value="All" selected="@(Model.Tab == "All")">All transactions</option>
-                    <option value="Reservations" selected="@(Model.Tab == "Reservations")">Reservations only</option>
-                    <option value="Borrowings" selected="@(Model.Tab == "Borrowings")">Borrowings only</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-sm btn-outline-secondary">Apply</button>
-                <a asp-action="Transactions" class="btn btn-sm btn-outline-secondary">Clear</a>
-            </div>
-        </form>
+<div class="cp-page-header">
+    <div>
+        <h1 class="cp-page-title">Transaction Monitoring</h1>
+        <p class="cp-page-subtitle">All reservations and borrowings in one view.</p>
     </div>
 </div>
 
-<div class="card">
-    <table class="table table-hover mb-0">
-        <thead class="table-light">
-            <tr>
-                <th>Type</th>
-                <th>Reference</th>
-                <th>Date</th>
-                <th>Actor</th>
-                <th>Equipment</th>
-                <th class="text-center">Qty</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Page.Items.Any())
-            {
-                <tr><td colspan="7" class="text-center text-muted py-4">No transactions found.</td></tr>
-            }
-            @foreach (var t in Model.Page.Items)
-            {
-                <tr>
-                    <td><span class="badge @(t.Type == "Reservation" ? "bg-info text-dark" : "bg-primary")">@t.Type</span></td>
-                    <td><strong>@t.Reference</strong></td>
-                    <td class="small">@t.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
-                    <td class="small">@t.Actor</td>
-                    <td>
-                        @t.Equipment
-                        <div class="text-muted small">@t.AssetCode</div>
-                    </td>
-                    <td class="text-center">@t.Quantity</td>
-                    <td class="small">@t.Status</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="cp-filter-bar">
+    <form method="get" asp-action="Transactions" style="display:contents;">
+        <input type="text" name="search" value="@Model.Search" class="cp-input" placeholder="Search by reference, actor, equipment..." />
+        <select name="tab" class="cp-select">
+            <option value="All" selected="@(Model.Tab == "All")">All transactions</option>
+            <option value="Reservations" selected="@(Model.Tab == "Reservations")">Reservations only</option>
+            <option value="Borrowings" selected="@(Model.Tab == "Borrowings")">Borrowings only</option>
+        </select>
+        <button type="submit" class="cp-btn cp-btn-secondary cp-btn-sm"><i class="fa-solid fa-filter"></i> Apply</button>
+        <a asp-action="Transactions" class="cp-btn cp-btn-secondary cp-btn-sm">Clear</a>
+    </form>
 </div>
 
-@if (Model.Page.TotalPages > 1)
+@if (!Model.Page.Items.Any())
 {
-    <nav class="mt-3 d-flex justify-content-between align-items-center">
-        <span class="text-muted small">Page @Model.Page.Page of @Model.Page.TotalPages (@Model.Page.TotalCount records)</span>
-        <ul class="pagination mb-0">
-            <li class="page-item @(Model.Page.HasPrevious ? "" : "disabled")">
-                <a class="page-link" asp-action="Transactions" asp-route-search="@Model.Search" asp-route-tab="@Model.Tab" asp-route-page="@(Model.Page.Page - 1)">‹</a>
+    <div class="cp-empty-state">
+        <div class="cp-empty-state-icon"><i class="fa-solid fa-receipt"></i></div>
+        <div class="cp-empty-state-text">No transactions found.</div>
+    </div>
+}
+else
+{
+    <div class="cp-table-wrap">
+        <table class="cp-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Reference</th>
+                    <th>Date</th>
+                    <th>Actor</th>
+                    <th>Equipment</th>
+                    <th class="text-center">Qty</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model.Page.Items)
+                {
+                    <tr>
+                        <td><span class="cp-badge @(t.Type == "Reservation" ? "cp-badge-info" : "cp-badge-success")">@t.Type</span></td>
+                        <td><strong>@t.Reference</strong></td>
+                        <td style="font-size:11.6px;">@t.Date.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                        <td style="font-size:11.6px;">@t.Actor</td>
+                        <td>
+                            @t.Equipment
+                            <div style="font-size:10.8px;color:var(--color-text-lighter);">@t.AssetCode</div>
+                        </td>
+                        <td class="text-center">@t.Quantity</td>
+                        <td style="font-size:11.6px;">@t.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.Page != null && Model.Page.TotalPages > 1)
+{
+    <div class="cp-pagination">
+        <span class="cp-pagination-info">Page @Model.Page.Page of @Model.Page.TotalPages (@Model.Page.TotalCount records)</span>
+        <ul class="cp-pagination-list">
+            <li class="@(Model.Page.HasPrevious ? "" : "disabled")">
+                <a asp-action="Transactions" asp-route-search="@Model.Search" asp-route-tab="@Model.Tab" asp-route-page="@(Model.Page.Page - 1)">‹</a>
             </li>
             @for (var p = 1; p <= Model.Page.TotalPages; p++)
             {
-                <li class="page-item @(p == Model.Page.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Transactions" asp-route-search="@Model.Search" asp-route-tab="@Model.Tab" asp-route-page="@p">@p</a>
+                <li class="@(p == Model.Page.Page ? "active" : "")">
+                    <a asp-action="Transactions" asp-route-search="@Model.Search" asp-route-tab="@Model.Tab" asp-route-page="@p">@p</a>
                 </li>
             }
-            <li class="page-item @(Model.Page.HasNext ? "" : "disabled")">
-                <a class="page-link" asp-action="Transactions" asp-route-search="@Model.Search" asp-route-tab="@Model.Tab" asp-route-page="@(Model.Page.Page + 1)">›</a>
+            <li class="@(Model.Page.HasNext ? "" : "disabled")">
+                <a asp-action="Transactions" asp-route-search="@Model.Search" asp-route-tab="@Model.Tab" asp-route-page="@(Model.Page.Page + 1)">›</a>
             </li>
         </ul>
-    </nav>
+    </div>
 }

@@ -1,195 +1,132 @@
 @using ASI.Basecode.Services.ViewModelClasses
-@using Microsoft.AspNetCore.Mvc.Rendering
 @model UserIndexViewModel
 @{
     ViewData["Title"] = "User Management";
 }
 
-@functions {
-    private static string GetInitials(string firstName, string lastName)
-    {
-        var first = string.IsNullOrWhiteSpace(firstName) ? string.Empty : firstName.Trim();
-        var last = string.IsNullOrWhiteSpace(lastName) ? string.Empty : lastName.Trim();
+<div class="cp-page-header">
+    <div>
+        <h1 class="cp-page-title">User Management</h1>
+        <p class="cp-page-subtitle">Manage user accounts, roles, and departments.</p>
+    </div>
+    <div class="cp-page-actions">
+        <a asp-action="Create" class="cp-btn cp-btn-success"><i class="fa-solid fa-plus"></i> Add User</a>
+    </div>
+</div>
 
-        var initials = string.Empty;
-        if (first.Length > 0) { initials += char.ToUpperInvariant(first[0]); }
-        if (last.Length > 0) { initials += char.ToUpperInvariant(last[0]); }
-        return string.IsNullOrEmpty(initials) ? "?" : initials;
-    }
+<!-- KPI cards -->
+<div class="cp-kpi-grid">
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Total Accounts</div>
+        <div class="cp-kpi-value">@(Model.Totals?.TotalAccounts ?? 0)</div>
+    </div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Students</div>
+        <div class="cp-kpi-value">@(Model.Totals?.Students ?? 0)</div>
+    </div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Faculty</div>
+        <div class="cp-kpi-value">@(Model.Totals?.Faculty ?? 0)</div>
+    </div>
+    <div class="cp-kpi">
+        <div class="cp-kpi-label">Custodians &amp; Admins</div>
+        <div class="cp-kpi-value">@(Model.Totals?.CustodianAdmins ?? 0)</div>
+    </div>
+</div>
 
-    private static string GetStatusBadgeClass(string statusCode)
-    {
-        return statusCode switch
-        {
-            "ACTIVE" => "bg-success-subtle text-success",
-            "INACTIVE" => "bg-secondary-subtle text-secondary",
-            "SUSPENDED" => "bg-danger-subtle text-danger",
-            "LOCKED" => "bg-warning-subtle text-warning",
-            _ => "bg-secondary-subtle text-secondary",
-        };
-    }
+<!-- Filter bar -->
+<div class="cp-filter-bar">
+    <form method="get" asp-action="Index" style="display:contents;">
+        <input type="text" name="search" value="@Model.Search" class="cp-input" placeholder="Search by name, account ID or email..." />
+        <select name="role" class="cp-select" asp-items="@(ViewBag.RoleOptions as SelectList)"></select>
+        <select name="department" class="cp-select" asp-items="@(ViewBag.DepartmentOptions as SelectList)"></select>
+        <select name="status" class="cp-select" asp-items="@(ViewBag.StatusOptions as SelectList)"></select>
+        <select name="pageSize" class="cp-select" style="max-width:90px;">
+            <option value="10" selected="@(Model.Page?.PageSize == 10)">10</option>
+            <option value="25" selected="@(Model.Page?.PageSize == 25)">25</option>
+        </select>
+        <button type="submit" class="cp-btn cp-btn-secondary cp-btn-sm"><i class="fa-solid fa-filter"></i> Apply</button>
+        <a asp-action="Index" class="cp-btn cp-btn-secondary cp-btn-sm">Clear</a>
+    </form>
+</div>
+
+<!-- Table -->
+@if (!Model.Page.Items.Any())
+{
+    <div class="cp-empty-state">
+        <div class="cp-empty-state-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="cp-empty-state-text">No user accounts found.</div>
+    </div>
+}
+else
+{
+    <div class="cp-table-wrap">
+        <table class="cp-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Account ID</th>
+                    <th>Role</th>
+                    <th>Department</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.Page.Items)
+                {
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div class="cp-avatar cp-avatar-sm">@(u.FirstName?.Substring(0,1))@(u.LastName?.Substring(0,1))</div>
+                                <div>
+                                    <div style="font-weight:600;">@u.FirstName @u.LastName</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="font-family:monospace;font-size:11.6px;">@u.AccountIdentifier</td>
+                        <td>@u.RoleName</td>
+                        <td>@(u.DepartmentName ?? "—")</td>
+                        <td style="font-size:11.6px;">@u.SchoolEmail</td>
+                        <td>
+                            <span class="cp-badge @(u.AccountStatusCode == "ACTIVE" ? "cp-badge-success" : u.AccountStatusCode == "SUSPENDED" ? "cp-badge-warning" : u.AccountStatusCode == "LOCKED" ? "cp-badge-error" : "cp-badge-neutral")">
+                                @u.AccountStatusDescription
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@u.UserId" class="cp-btn cp-btn-secondary cp-btn-sm">View</a>
+                            <a asp-action="Edit" asp-route-id="@u.UserId" class="cp-btn cp-btn-secondary cp-btn-sm" style="margin-left:4px;">Edit</a>
+                            <form method="post" asp-action="Delete" asp-route-id="@u.UserId" style="display:inline;margin-left:4px;"
+                                  onsubmit="return confirm('Delete this user account?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="cp-btn cp-btn-danger cp-btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="mb-1">User Management</h2>
-        <div class="text-muted">Student, faculty, custodian and administrator accounts.</div>
-    </div>
-    <a asp-action="Create" class="btn btn-success">+ Add User</a>
-</div>
-
-<div class="row g-3 mb-4">
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Total Accounts</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.TotalAccounts</div>
-        </div></div>
-    </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Students</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.Students</div>
-        </div></div>
-    </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Faculty</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.Faculty</div>
-        </div></div>
-    </div>
-    <div class="col">
-        <div class="card h-100"><div class="card-body">
-            <div class="text-muted small">Custodians &amp; Admins</div>
-            <div class="fs-3 fw-bold">@Model.Totals?.CustodianAdmins</div>
-        </div></div>
-    </div>
-</div>
-
-<div class="card mb-3">
-    <div class="card-body py-3">
-        <form method="get" asp-action="Index" class="row g-2 align-items-center">
-            <div class="col-md-4">
-                <input type="text" name="search" value="@Model.Search" class="form-control"
-                       placeholder="Search by name, school ID or email..." />
-            </div>
-            <div class="col-md-2">
-                <select name="role" class="form-select" asp-items="@(ViewBag.RoleOptions as SelectList)"></select>
-            </div>
-            <div class="col-md-2">
-                <select name="department" class="form-select" asp-items="@(ViewBag.DepartmentOptions as SelectList)"></select>
-            </div>
-            <div class="col-md-2">
-                <select name="status" class="form-select" asp-items="@(ViewBag.StatusOptions as SelectList)"></select>
-            </div>
-            <div class="col-md-2">
-                <select name="pageSize" class="form-select" asp-items="@(ViewBag.PageSizeOptions as SelectList)"></select>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-sm btn-outline-secondary me-1">
-                    <i class="fa-solid fa-filter"></i> Apply Filters
-                </button>
-                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Clear</a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="card">
-    <table class="table table-hover mb-0">
-        <thead class="table-light">
-            <tr>
-                <th>Name</th>
-                <th>School / Account ID</th>
-                <th>Role</th>
-                <th>Department</th>
-                <th>Contact</th>
-                <th>Status</th>
-                <th class="text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Page.Items.Any())
-            {
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">No user accounts found.</td>
-                </tr>
-            }
-            @foreach (var user in Model.Page.Items)
-            {
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <span class="badge rounded-circle bg-primary-subtle text-primary me-2 p-2"
-                                  style="min-width: 2.2rem; min-height: 2.2rem; display: inline-flex; align-items: center; justify-content: center;">
-                                @GetInitials(user.FirstName, user.LastName)
-                            </span>
-                            <span>
-                                <strong>@user.FirstName @user.LastName</strong>
-                                <div class="text-muted small">@user.SchoolEmail</div>
-                            </span>
-                        </div>
-                    </td>
-                    <td class="text-nowrap">@user.AccountIdentifier</td>
-                    <td>
-                        <span class="badge bg-info-subtle text-info">@user.RoleName</span>
-                    </td>
-                    <td>@(user.DepartmentName ?? "—")</td>
-                    <td>@(string.IsNullOrWhiteSpace(user.SchoolEmail) ? "—" : user.SchoolEmail)</td>
-                    <td>
-                        <span class="badge @GetStatusBadgeClass(user.AccountStatusCode)">@user.AccountStatusDescription</span>
-                    </td>
-                    <td class="text-center text-nowrap">
-                        <a asp-action="Details" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-primary">View</a>
-                        <a asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <form method="post" asp-action="Delete" asp-route-id="@user.UserId" class="d-inline"
-                              onsubmit="return confirm('Delete this user account? Deletion is blocked while borrowings, reservations or inventory movements reference it.');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-@if (Model.Page.TotalPages > 1)
+@if (Model.Page != null && Model.Page.TotalPages > 1)
 {
-    <nav class="mt-3 d-flex justify-content-between align-items-center">
-        <span class="text-muted small">
-            Showing page @Model.Page.Page of @Model.Page.TotalPages (@Model.PageSize per page, @Model.Page.TotalCount accounts)
-        </span>
-        <ul class="pagination mb-0">
-            <li class="page-item @(Model.Page.HasPrevious ? "" : "disabled")">
-                <a class="page-link" asp-action="Index"
-                   asp-route-search="@Model.Search"
-                   asp-route-role="@Model.RoleId"
-                   asp-route-department="@Model.DepartmentId"
-                   asp-route-status="@Model.AccountStatusId"
-                   asp-route-pageSize="@Model.PageSize"
-                   asp-route-page="@(Model.Page.Page - 1)">‹</a>
+    <div class="cp-pagination">
+        <span class="cp-pagination-info">Page @Model.Page.Page of @Model.Page.TotalPages (@Model.Page.TotalCount records)</span>
+        <ul class="cp-pagination-list">
+            <li class="@(Model.Page.HasPrevious ? "" : "disabled")">
+                <a asp-action="Index" asp-route-search="@Model.Search" asp-route-role="@Model.RoleId" asp-route-department="@Model.DepartmentId" asp-route-status="@Model.AccountStatusId" asp-route-page="@(Model.Page.Page - 1)">‹</a>
             </li>
             @for (var p = 1; p <= Model.Page.TotalPages; p++)
             {
-                <li class="page-item @(p == Model.Page.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Index"
-                       asp-route-search="@Model.Search"
-                       asp-route-role="@Model.RoleId"
-                       asp-route-department="@Model.DepartmentId"
-                       asp-route-status="@Model.AccountStatusId"
-                       asp-route-pageSize="@Model.PageSize"
-                       asp-route-page="@p">@p</a>
+                <li class="@(p == Model.Page.Page ? "active" : "")">
+                    <a asp-action="Index" asp-route-search="@Model.Search" asp-route-role="@Model.RoleId" asp-route-department="@Model.DepartmentId" asp-route-status="@Model.AccountStatusId" asp-route-page="@p">@p</a>
                 </li>
             }
-            <li class="page-item @(Model.Page.HasNext ? "" : "disabled")">
-                <a class="page-link" asp-action="Index"
-                   asp-route-search="@Model.Search"
-                   asp-route-role="@Model.RoleId"
-                   asp-route-department="@Model.DepartmentId"
-                   asp-route-status="@Model.AccountStatusId"
-                   asp-route-pageSize="@Model.PageSize"
-                   asp-route-page="@(Model.Page.Page + 1)">›</a>
+            <li class="@(Model.Page.HasNext ? "" : "disabled")">
+                <a asp-action="Index" asp-route-search="@Model.Search" asp-route-role="@Model.RoleId" asp-route-department="@Model.DepartmentId" asp-route-status="@Model.AccountStatusId" asp-route-page="@(Model.Page.Page + 1)">›</a>
             </li>
         </ul>
-    </nav>
+    </div>
 }
